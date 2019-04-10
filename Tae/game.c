@@ -1,9 +1,10 @@
+
 #include "raylib.h"
 
 int main()
 {
     // confix
-    int circle_img = 20;
+    int circle_img = 40;
     int speed_move_x_left = 20.0f;
     int speed_move_x_right = 20.0f;
     int speed_move_y_up = 20.0f;
@@ -31,7 +32,7 @@ int main()
         if (IsKeyDown(KEY_LEFT)) ballPosition.x -= speed_move_x_left;
         if (IsKeyDown(KEY_UP)) ballPosition.y -= speed_move_y_up;
         if (IsKeyDown(KEY_DOWN)) ballPosition.y += speed_move_y_down;
-        
+
         if (ballPosition.x >= screenWidth - circle_img) {
             speed_move_x_right = 0.0f;
         } else if (ballPosition.x <= circle_img) {
@@ -46,7 +47,7 @@ int main()
             speed_move_x_left = 20.0f;
             speed_move_x_right = 20.0f;
         }
-        
+
         //----------------------------------------------------------------------------------
 
         // Draw
