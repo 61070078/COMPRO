@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "stdlib.h"
 
 int main()
 {
@@ -6,15 +7,14 @@ int main()
     //--------------------------------------------------------------------------------------
     int screenWidth = 1280;
     int screenHeight = 720;
-    int gravity = 10;
 
-    int playNumber = 1;
+    int playNumber = 0;
     int playerSpeed = 6.5;
     int playerState = 0; // Player not move
     int playerAttack = 10;
     int playerHp = 100;
 
-    int attackState = 0;
+    int actionState = 0;
 
     int enemyHp = 150;
     int enemyState = 1;
@@ -28,22 +28,23 @@ int main()
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     Texture2D player[4];
-    player[0] = LoadTexture("../src/IMG/player/3_KNIGHT/_WALK/walk_R");        // Texture loading
-    player[1] = LoadTexture("../src/IMG/player/3_KNIGHT/_WALK/walk_L");        // Texture loading
+    player[0] = LoadTexture("sp_2.png");        // Texture loading
+    player[1] = LoadTexture("sp_3.png");        // Texture loading
+    
+    Vector2 origin = {0, 0};
 
     Rectangle playerFrame = { 0.0f, 0.0f, (float)player[playNumber].width/6, (float)player[playNumber].height };
     Rectangle playerFrame2 = { 0.0f, 0.0f, (float)player[playNumber].width/6, (float)player[playNumber].height };
     Rectangle playerHitbox = { (float)screenWidth/2, (float)screenHeight/2, 100.0, 100.0};
-    Vector2 playerOrigin = {50, 50};
 
-
-    Texture2D attack = LoadTexture("slash.png");
+    Texture2D attack = LoadTexture("../src/IMG/player/3_KNIGHT/_ATTACK/slash.png");
     int attackDirection = 0;
     Rectangle attackFrame = { 0.0f, 0.0f, (float)attack.width/5, (float)attack.height };
-    Rectangle playerAttackBox = { playerHitbox.x + 75, playerHitbox.y, 50.0, 100.0};
-    Vector2 attackOrigin = {25, 50};
+    Rectangle playerAttackBox = { playerHitbox.x + 100, playerHitbox.y, 50.0, 100.0};
 
-    Vector2 enemyPosition = {150, 150};
+    int enemySpeed = 4;
+    bool enemyHitWall = false;
+    Rectangle enemyBox = {300, 300, 100, 100};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -65,12 +66,28 @@ int main()
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
+        actionState = 0;
+        enemyColor = WHITE;
         playerState = 0;
-        playerHitbox.y += gravity;
         framesCounter++;
         // Update
         //----------------------------------------------------------------------------------
-        if (IsKeyDown(KEY_RIGHT)) {
+        enemyHitWall = CheckCollisionRecs(playerHitbox, enemyBox);
+        if(!enemyHitWall){
+            if(abs(enemyBox.x - playerHitbox.x) < enemySpeed) enemyBox.x = playerHitbox.x;
+            else if(enemyBox.x < playerHitbox.x) enemyBox.x += enemySpeed;
+            else if(enemyBox.x > playerHitbox.x) enemyBox.x -= enemySpeed;
+        
+            if(abs(enemyBox.y - playerHitbox.y) < enemySpeed) enemyBox.y = playerHitbox.y;
+            else if(enemyBox.y < playerHitbox.y) enemyBox.y += enemySpeed;
+            else if(enemyBox.y > playerHitbox.y) enemyBox.y -= enemySpeed;    
+        } else if (enemyHitWall && framesCounter%5 == 0) playerHp -= 2;
+        
+        if(playerHp <= 0) {
+            playerHp = 0;
+            playerState = -1;
+        } else {
+            if (IsKeyDown(KEY_RIGHT)) {
             playerHitbox.x += playerSpeed;
             playNumber = 0;
             playerState = 1;
@@ -78,65 +95,73 @@ int main()
                 playerHitbox.x = screenWidth - 100;
 
             attackDirection = 0;
-            playerAttackBox.x = playerHitbox.x + 75;
+            playerAttackBox.width = 50;
+            playerAttackBox.height = 100;
+            playerAttackBox.x = playerHitbox.x + 100;
             playerAttackBox.y = playerHitbox.y;
+            
 
+            }
+            if (IsKeyDown(KEY_LEFT)) {
+                playerHitbox.x -= playerSpeed;
+                playNumber = 1;
+                playerState = 1;
+                if(playerHitbox.x <= 100)
+                    playerHitbox.x = 100;
+
+                attackDirection = 2;
+                playerAttackBox.width = 50;
+                playerAttackBox.height = 100;
+                playerAttackBox.x = playerHitbox.x - 50;
+                playerAttackBox.y = playerHitbox.y;    
+            }
+            if (IsKeyDown(KEY_UP)) {
+                playerHitbox.y -= playerSpeed;
+                playerState = 1;
+                if(playerHitbox.y <= 100)
+                    playerHitbox.y = 100;
+
+                attackDirection = 3;
+                playerAttackBox.width = 100;
+                playerAttackBox.height = 50;
+                playerAttackBox.x = playerHitbox.x;
+                playerAttackBox.y = playerHitbox.y - 50;
+            }
+            if (IsKeyDown(KEY_DOWN)) {
+                playerHitbox.y += playerSpeed;
+                playerState = 1;
+                if(playerHitbox.y >= screenHeight - 100)
+                    playerHitbox.y = screenHeight - 100;
+
+                attackDirection = 1;
+                playerAttackBox.width = 100;
+                playerAttackBox.height = 50;
+                playerAttackBox.x = playerHitbox.x;
+                playerAttackBox.y = playerHitbox.y + 100;      
+            }
+
+            if (IsKeyPressed(KEY_SPACE)) {
+                actionState = 1;
+                if(CheckCollisionRecs(playerAttackBox, enemyBox)){
+                    enemyColor = BLACK;
+                    enemyHp -= playerAttack;
+                    if(enemyHp <= 0){
+                        enemyHp = 0;
+                        enemyState = 0;
+                    }
+                }
+            }
+
+            if (framesCounter >= (60/framesSpeed))
+            {
+                framesCounter = 0;
+                currentPlayerFrame++;
+                if (currentPlayerFrame > 5) currentPlayerFrame = 0;
+                playerFrame.x = (float)currentPlayerFrame*(float)player[playNumber].width/6;
+            }
         }
-        if (IsKeyDown(KEY_LEFT)) {
-            playerHitbox.x -= playerSpeed;
-            playNumber = 1;
-            playerState = 1;
-            if(playerHitbox.x <= 100)
-                playerHitbox.x = 100;
-
-            attackDirection = 2;    
-            playerAttackBox.x = playerHitbox.x - 75;
-            playerAttackBox.y = playerHitbox.y;    
-        }
-        if (IsKeyDown(KEY_UP)) {
-            playerHitbox.y -= playerSpeed;
-            playerState = 1;
-            if(playerHitbox.y <= 100)
-                playerHitbox.y = 100;
-
-            attackDirection = 3;
-            playerAttackBox.x = playerHitbox.x;
-            playerAttackBox.y = playerHitbox.y - 75;
-        }
-        if (IsKeyDown(KEY_DOWN)) {
-            playerHitbox.y += playerSpeed;
-            playerState = 1;
-            if(playerHitbox.y >= screenHeight - 100)
-                playerHitbox.y = screenHeight - 100;
-
-            attackDirection = 1;
-            playerAttackBox.x = playerHitbox.x;
-            playerAttackBox.y = playerHitbox.y + 75;      
-        }
-
-        // if (IsKeyPressed(KEY_SPACE)) {
-        //     hit = CheckCollisionRecs(attack_box, enemy);
-        //     if(hit){
-        //         enemyColor = BLACK;
-        //         enemyHp -= playerAttack;
-        //         hit = false;
-        //         if(enemyHp <= 0){
-        //             enemyHp = 0;
-        //             enemyState = 0;}
-        //     }
-        // }
-
-        if (framesCounter >= (60/framesSpeed))
-        {
-            framesCounter = 0;
-            currentPlayerFrame++;
-            if (currentPlayerFrame > 5) currentPlayerFrame = 0;
-            playerFrame.x = (float)currentPlayerFrame*(float)player[playNumber].width/6;
-
-            currentAttackFrame++;
-            if (currentAttackFrame > 4) currentAttackFrame = 0;
-            attackFrame.x = (float)currentAttackFrame*(float)attack.width/5;
-        }
+        
+        
 
         //----------------------------------------------------------------------------------
 
@@ -150,25 +175,35 @@ int main()
 
             switch(playerState){
                 case 1:
-                    DrawTexturePro(player[playNumber], playerFrame, playerHitbox, playerOrigin, 0.0, WHITE);
+                    DrawTexturePro(player[playNumber], playerFrame, playerHitbox, origin, 0.0, WHITE);
                     break;
+                case -1:
+                    DrawText("GameOver", screenWidth/2, screenHeight/2 - 35, 70, GRAY);
+                    break;    
                 default:
-                    DrawTexturePro(player[playNumber], playerFrame2, playerHitbox, playerOrigin, 0.0, WHITE);
+                    DrawTexturePro(player[playNumber], playerFrame2, playerHitbox, origin, 0.0, WHITE);
             }
 
-            DrawLineV(Vector2 start = {0.0, screenHeight-100},Vector2 end = {screenWidth, screenWidth-100})
+            switch(enemyState){
+                case 1:
+                    if(playerState != -1){
+                        DrawRectangleRec(enemyBox, enemyColor);
+                        DrawText(FormatText("%d", enemyHp), enemyBox.x, enemyBox.y - 22, 20, GRAY);
+                    }
+                    break;
+                default:
+                    break;
+            }
 
-            // switch(enemyState){
-            //     case 1:
-            //         DrawText(FormatText("%d", enemyHp), enemyPosition.x, enemyPosition.y - 22, 20, GRAY);
-            //         break;
-            //     default:
-            //         break;
-            // }
-
-            // switch(attackState){
-            //     case 1:
-            // }
+            switch(actionState){
+                case 1:
+                    DrawRectangleRec(playerAttackBox, RED);
+                    break;
+                default:
+                    if(playerState != -1) DrawRectangleRec(playerAttackBox, WHITE);
+            }
+            
+            DrawText(FormatText("Hp %d", playerHp), 10, screenHeight - 40, 30, GREEN);
             
 
 
