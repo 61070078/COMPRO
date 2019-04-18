@@ -8,17 +8,6 @@ int main()
     int screenWidth = 1280;
     int screenHeight = 720;
 
-    int playNumber = 0;
-    int playerSpeed = 6.5;
-    int playerState = 0; // Player not move
-    int playerAttack = 10;
-    int playerHp = 100;
-
-    int actionState = 0;
-
-    int enemyHp = 150;
-    int enemyState = 1;
-
     int currentPlayerFrame = 0;
     int currentAttackFrame = 0;
     int framesCounter = 0;
@@ -27,36 +16,67 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [texture] example - texture rectangle");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    Texture2D player[4];
-    player[0] = LoadTexture("sp_2.png");        // Texture loading
-    player[1] = LoadTexture("sp_3.png");        // Texture loading
-    
-    Vector2 origin = {0, 0};
+    Texture2D playerTexture[4];
+    playerTexture[0] = LoadTexture("sp_2.png");        // Texture loading
+    playerTexture[1] = LoadTexture("sp_3.png");        // Texture loading
 
-    Rectangle playerFrame = { 0.0f, 0.0f, (float)player[playNumber].width/6, (float)player[playNumber].height };
-    Rectangle playerFrame2 = { 0.0f, 0.0f, (float)player[playNumber].width/6, (float)player[playNumber].height };
-    Rectangle playerHitbox = { (float)screenWidth/2, (float)screenHeight/2, 100.0, 100.0};
-
-    Texture2D attack = LoadTexture("../src/IMG/player/3_KNIGHT/_ATTACK/slash.png");
-    int attackDirection = 0;
-    Rectangle attackFrame = { 0.0f, 0.0f, (float)attack.width/5, (float)attack.height };
-    Rectangle playerAttackBox = { playerHitbox.x + 100, playerHitbox.y, 50.0, 100.0};
-
-    int enemySpeed = 4;
-    bool enemyHitWall = false;
-    Rectangle enemyBox = {300, 300, 100, 100};
-
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
-
-    // Loading PNG--------------------------------------------------------------------------
+     // Loading PNG--------------------------------------------------------------------------
     Texture2D texture[2];
     texture[0] = LoadTextureFromImage(LoadImage("bg_1.png"));
     texture[1] = LoadTextureFromImage(LoadImage("map.png"));
 
-    Color enemyColor = WHITE;
+    UnloadImage(LoadImage("bg_1.png"));
+    UnloadImage(LoadImage("bg_2.png"));
+    
+    Texture2D attack = LoadTexture("../src/IMG/playerTexture/3_KNIGHT/_ATTACK/slash.png");
 
-    bool hit = false;
+    struct Character {
+        int hp;
+        int attack;
+        float speed;
+        int stamina;
+        int staminaRecove;
+        int texture;
+        int state;
+        int action;
+        bool hitWall;
+    };
+
+    struct Monster {
+        int hp;
+        int attack;
+        float speed;
+        int atkDelay;
+        int texture;
+        int state;
+        int action;
+        bool hitWall;
+    };
+
+    struct Character player = {100, 10, 8, 50, 1, 0, 0, 0, false};
+    Rectangle playerFrame = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/6, (float)playerTexture[player.texture].height };
+    Rectangle playerFrame2 = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/6, (float)playerTexture[player.texture].height };
+    Rectangle playerBox = { (float)screenWidth/2, (float)screenHeight/2, 50.0, 50.0};
+
+    struct Monster enemy[10];
+    enemy[0].hp = 200;
+    enemy[0].attack = 2;
+    enemy[0].speed = 4;
+    enemy[0].atkDelay = 50;
+    enemy[0].texture = 0;
+    enemy[0].state = 1;
+    enemy[0].action = 0;
+    enemy[0].hitWall = false;
+    Rectangle enemyBox = {150, 150, 50, 50};
+
+    Vector2 origin = {0, 0};
+
+    // Rectangle attackFrame = { 0.0f, 0.0f, (float)attack.width/5, (float)attack.height };
+    Rectangle playerAttackBox = { playerBox.x + 50, playerBox.y, 50.0, 50.0};
+
+    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    //--------------------------------------------------------------------------------------
+    Color enemyColor = WHITE;
 
     UnloadImage(LoadImage("bg_1.png"));
     UnloadImage(LoadImage("bg_2.png"));
@@ -66,88 +86,77 @@ int main()
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        actionState = 0;
+        player.action = 0;
         enemyColor = WHITE;
-        playerState = 0;
+        player.state = 0;
         framesCounter++;
         // Update
         //----------------------------------------------------------------------------------
-        enemyHitWall = CheckCollisionRecs(playerHitbox, enemyBox);
-        if(!enemyHitWall){
-            if(abs(enemyBox.x - playerHitbox.x) < enemySpeed) enemyBox.x = playerHitbox.x;
-            else if(enemyBox.x < playerHitbox.x) enemyBox.x += enemySpeed;
-            else if(enemyBox.x > playerHitbox.x) enemyBox.x -= enemySpeed;
+        enemy[0].hitWall = CheckCollisionRecs(playerBox, enemyBox);
+        if(!enemy[0].hitWall){
+            if(abs(enemyBox.x - playerBox.x) < enemy[0].speed) enemyBox.x = playerBox.x;
+            else if(enemyBox.x < playerBox.x) enemyBox.x += enemy[0].speed;
+            else if(enemyBox.x > playerBox.x) enemyBox.x -= enemy[0].speed;
         
-            if(abs(enemyBox.y - playerHitbox.y) < enemySpeed) enemyBox.y = playerHitbox.y;
-            else if(enemyBox.y < playerHitbox.y) enemyBox.y += enemySpeed;
-            else if(enemyBox.y > playerHitbox.y) enemyBox.y -= enemySpeed;    
-        } else if (enemyHitWall && framesCounter%5 == 0) playerHp -= 2;
+            if(abs(enemyBox.y - playerBox.y) < enemy[0].speed) enemyBox.y = playerBox.y;
+            else if(enemyBox.y < playerBox.y) enemyBox.y += enemy[0].speed;
+            else if(enemyBox.y > playerBox.y) enemyBox.y -= enemy[0].speed;    
+        } else if (enemy[0].hitWall && framesCounter%7 == 0 && enemy[0].state > -1) player.hp -= enemy[0].attack;
         
-        if(playerHp <= 0) {
-            playerHp = 0;
-            playerState = -1;
+        if(player.hp <= 0) {
+            player.hp = 0;
+            player.state = -1;
         } else {
             if (IsKeyDown(KEY_RIGHT)) {
-            playerHitbox.x += playerSpeed;
-            playNumber = 0;
-            playerState = 1;
-            if(playerHitbox.x >= screenWidth - 100)
-                playerHitbox.x = screenWidth - 100;
+            playerBox.x += (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
+            player.texture = 0;
+            player.state = 1;
+            if(playerBox.x >= screenWidth - 100)
+                playerBox.x = screenWidth - 100;
 
-            attackDirection = 0;
-            playerAttackBox.width = 50;
-            playerAttackBox.height = 100;
-            playerAttackBox.x = playerHitbox.x + 100;
-            playerAttackBox.y = playerHitbox.y;
+            playerAttackBox.x = playerBox.x + 50;
+            playerAttackBox.y = playerBox.y;
             
 
             }
             if (IsKeyDown(KEY_LEFT)) {
-                playerHitbox.x -= playerSpeed;
-                playNumber = 1;
-                playerState = 1;
-                if(playerHitbox.x <= 100)
-                    playerHitbox.x = 100;
+                playerBox.x -= (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
+                player.texture = 1;
+                player.state = 1;
+                if(playerBox.x <= 50)
+                    playerBox.x = 50;
 
-                attackDirection = 2;
-                playerAttackBox.width = 50;
-                playerAttackBox.height = 100;
-                playerAttackBox.x = playerHitbox.x - 50;
-                playerAttackBox.y = playerHitbox.y;    
+                playerAttackBox.x = playerBox.x - 50;
+                playerAttackBox.y = playerBox.y;    
             }
             if (IsKeyDown(KEY_UP)) {
-                playerHitbox.y -= playerSpeed;
-                playerState = 1;
-                if(playerHitbox.y <= 100)
-                    playerHitbox.y = 100;
+                playerBox.y -= (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
+                player.state = 1;
+                if(playerBox.y <= 50)
+                    playerBox.y = 50;
 
-                attackDirection = 3;
-                playerAttackBox.width = 100;
-                playerAttackBox.height = 50;
-                playerAttackBox.x = playerHitbox.x;
-                playerAttackBox.y = playerHitbox.y - 50;
+                playerAttackBox.x = playerBox.x;
+                playerAttackBox.y = playerBox.y - 50;
             }
             if (IsKeyDown(KEY_DOWN)) {
-                playerHitbox.y += playerSpeed;
-                playerState = 1;
-                if(playerHitbox.y >= screenHeight - 100)
-                    playerHitbox.y = screenHeight - 100;
+                playerBox.y += (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
+                player.state = 1;
+                if(playerBox.y >= screenHeight - 100)
+                    playerBox.y = screenHeight - 100;
 
-                attackDirection = 1;
-                playerAttackBox.width = 100;
-                playerAttackBox.height = 50;
-                playerAttackBox.x = playerHitbox.x;
-                playerAttackBox.y = playerHitbox.y + 100;      
+                playerAttackBox.x = playerBox.x;
+                playerAttackBox.y = playerBox.y + 50;      
             }
 
-            if (IsKeyPressed(KEY_SPACE)) {
-                actionState = 1;
+            if (IsKeyPressed(KEY_SPACE) && player.stamina >= 5) {
+                player.action = 1;
+                player.stamina  -= 5;
                 if(CheckCollisionRecs(playerAttackBox, enemyBox)){
                     enemyColor = BLACK;
-                    enemyHp -= playerAttack;
-                    if(enemyHp <= 0){
-                        enemyHp = 0;
-                        enemyState = 0;
+                    enemy[0].hp -= player.attack;
+                    if(enemy[0].hp <= 0){
+                        enemy[0].hp = 0;
+                        enemy[0].state = -1;
                     }
                 }
             }
@@ -156,8 +165,10 @@ int main()
             {
                 framesCounter = 0;
                 currentPlayerFrame++;
+                player.stamina += player.staminaRecove;
+                if(player.stamina > 50) player.stamina = 50;
                 if (currentPlayerFrame > 5) currentPlayerFrame = 0;
-                playerFrame.x = (float)currentPlayerFrame*(float)player[playNumber].width/6;
+                playerFrame.x = (float)currentPlayerFrame*(float)playerTexture[player.texture].width/6;
             }
         }
         
@@ -173,37 +184,38 @@ int main()
 
             DrawTexture(texture[1], 0, 0, WHITE);
 
-            switch(playerState){
+            switch(player.state){
                 case 1:
-                    DrawTexturePro(player[playNumber], playerFrame, playerHitbox, origin, 0.0, WHITE);
+                    DrawTexturePro(playerTexture[player.texture], playerFrame, playerBox, origin, 0.0, WHITE);
                     break;
                 case -1:
                     DrawText("GameOver", screenWidth/2, screenHeight/2 - 35, 70, GRAY);
                     break;    
                 default:
-                    DrawTexturePro(player[playNumber], playerFrame2, playerHitbox, origin, 0.0, WHITE);
+                    DrawTexturePro(playerTexture[player.texture], playerFrame2, playerBox, origin, 0.0, WHITE);
             }
 
-            switch(enemyState){
+            switch(enemy[0].state){
                 case 1:
-                    if(playerState != -1){
+                    if(player.state != -1){
                         DrawRectangleRec(enemyBox, enemyColor);
-                        DrawText(FormatText("%d", enemyHp), enemyBox.x, enemyBox.y - 22, 20, GRAY);
+                        DrawText(FormatText("%d", enemy[0].hp), enemyBox.x, enemyBox.y - 22, 20, GRAY);
                     }
                     break;
                 default:
                     break;
             }
 
-            switch(actionState){
+            switch(player.action){
                 case 1:
                     DrawRectangleRec(playerAttackBox, RED);
                     break;
                 default:
-                    if(playerState != -1) DrawRectangleRec(playerAttackBox, WHITE);
+                    if(player.state != -1) DrawRectangleRec(playerAttackBox, WHITE);
             }
             
-            DrawText(FormatText("Hp %d", playerHp), 10, screenHeight - 40, 30, GREEN);
+            DrawText(FormatText("Hp %d", player.hp), 10, screenHeight - 40, 25, GREEN);
+            DrawText(FormatText("Stamina %d", player.stamina), 100, screenHeight - 40, 20, BLUE);
             
 
 
@@ -213,11 +225,11 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    UnloadTexture(player[0]);       // Texture unloading
-    UnloadTexture(player[1]);       // Texture unloading
+    UnloadTexture(playerTexture[0]);       // Texture unloading
+    UnloadTexture(playerTexture[1]);       // Texture unloading
     UnloadTexture(texture[0]);
     UnloadTexture(texture[1]);
-    UnloadTexture(attack);
+    // UnloadTexture(attack);
 
     CloseWindow();                // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
