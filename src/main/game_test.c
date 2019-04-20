@@ -3,35 +3,71 @@
 
 int main()
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
+    // Variable And Config-------------------------------------------------------------------------
+    int playerTextureValue = 4;
+    int mapTextureValue = 5;
+    int enemyTectureValue = 20;
     int screenWidth = 1280;
     int screenHeight = 720;
-
     int currentPlayerFrame = 0;
     int currentAttackFrame = 0;
     int framesCounter = 0;
-    int framesSpeed = 8;     // Number of spritesheet frames shown by second
+    int framesSpeed = 8;
+    int theEnemy = 3;
+    int enemyFrames = 0;
+    int valueEnemy = 0;
+    //----------------------------------------------------------------------------------
 
-    InitWindow(screenWidth, screenHeight, "raylib [texture] example - texture rectangle");
+    // Set Window----------------------------------------------------------------------
+    InitWindow(screenWidth, screenHeight, "Game Beta");
+    SetTargetFPS(60);  
+    //----------------------------------------------------------------------------------
 
-    // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    Texture2D playerTexture[4];
-    playerTexture[0] = LoadTexture("../IMG/Player/walk_R.png");        // Texture loading
-    playerTexture[1] = LoadTexture("../IMG/Player/walk_L.png");        // Texture loading
+
+    // Loading PNG----------------------------------------------------------------------
+    Texture2D playerTexture[playerTextureValue];
+    playerTexture[0] = LoadTexture("../IMG/Player/walk_R.png");
+    playerTexture[1] = LoadTexture("../IMG/Player/walk_L.png");
     playerTexture[2] = LoadTexture("../IMG/Player/walk_F.png");
     playerTexture[3] = LoadTexture("../IMG/Player/walk_B.png");
-    
-     // Loading PNG--------------------------------------------------------------------------
-    Texture2D texture[2];
-    texture[0] = LoadTextureFromImage(LoadImage("../IMG/maps/map_1.png"));
-    texture[1] = LoadTextureFromImage(LoadImage("../IMG/maps/map_2.png"));
 
-    UnloadImage(LoadImage("../IMG/maps/map_1.png"));
-    UnloadImage(LoadImage("../IMG/maps/map_2.png"));
-    
-    Texture2D attack = LoadTexture("../IMG/Player/WP/sword_F.png");
+    Texture2D enemyTexture[enemyTectureValue];
+    enemyTexture[0] = LoadTexture("../IMG/Enemy/EM_1/EM/walk_R.png");
+    enemyTexture[1] = LoadTexture("../IMG/Enemy/EM_1/EM/walk_L.png");
+    enemyTexture[2] = LoadTexture("../IMG/Enemy/EM_1/EM/walk_F.png");
+    enemyTexture[3] = LoadTexture("../IMG/Enemy/EM_1/EM/walk_B.png");
 
+    enemyTexture[4] = LoadTexture("../IMG/Enemy/EM_2/EM/walk_R.png");
+    enemyTexture[5] = LoadTexture("../IMG/Enemy/EM_2/EM/walk_L.png");
+    enemyTexture[6] = LoadTexture("../IMG/Enemy/EM_2/EM/walk_F.png");
+    enemyTexture[7] = LoadTexture("../IMG/Enemy/EM_2/EM/walk_B.png");
+
+    enemyTexture[8] = LoadTexture("../IMG/Enemy/EM_3/EM/walk_R.png");
+    enemyTexture[9] = LoadTexture("../IMG/Enemy/EM_3/EM/walk_L.png");
+    enemyTexture[10] = LoadTexture("../IMG/Enemy/EM_3/EM/walk_F.png");
+    enemyTexture[11] = LoadTexture("../IMG/Enemy/EM_3/EM/walk_B.png");
+
+    enemyTexture[12] = LoadTexture("../IMG/Enemy/EM_4/EM/walk_R.png");
+    enemyTexture[13] = LoadTexture("../IMG/Enemy/EM_4/EM/walk_L.png");
+    enemyTexture[14] = LoadTexture("../IMG/Enemy/EM_4/EM/walk_F.png");
+    enemyTexture[15] = LoadTexture("../IMG/Enemy/EM_4/EM/walk_B.png");
+
+    enemyTexture[16] = LoadTexture("../IMG/Enemy/EM_5/EM/walk_R.png");
+    enemyTexture[17] = LoadTexture("../IMG/Enemy/EM_5/EM/walk_L.png");
+    enemyTexture[18] = LoadTexture("../IMG/Enemy/EM_5/EM/walk_F.png");
+    enemyTexture[19] = LoadTexture("../IMG/Enemy/EM_5/EM/walk_B.png");
+    
+    Texture2D mapTexture[mapTextureValue];
+    mapTexture[0] = LoadTexture("../IMG/maps/map_1.png");
+    mapTexture[1] = LoadTexture("../IMG/maps/map_2.png");
+    mapTexture[2] = LoadTexture("../IMG/maps/map_3.png");
+    mapTexture[3] = LoadTexture("../IMG/maps/map_4.png");
+    mapTexture[4] = LoadTexture("../IMG/maps/map_s.png");
+
+    // Texture2D attack = LoadTexture("../IMG/Player/WP/sword_F.png");
+    //----------------------------------------------------------------------------------
+
+    // Struct --------------------------------------------------------------------------
     struct Character {
         int hp;
         int attack;
@@ -56,11 +92,8 @@ int main()
     };
 
     struct Character player = {100, 10, 8, 50, 1, 0, 0, 0, false};
-    Rectangle playerFrame = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/3, (float)playerTexture[player.texture].height };
-    Rectangle playerFrame2 = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/3, (float)playerTexture[player.texture].height };
-    Rectangle playerBox = { (float)screenWidth/2, (float)screenHeight/2, 50.0, 50.0};
 
-    struct Monster enemy[10];
+    struct Monster enemy[5];
     enemy[0].hp = 200;
     enemy[0].attack = 2;
     enemy[0].speed = 4;
@@ -69,31 +102,45 @@ int main()
     enemy[0].state = 1;
     enemy[0].action = 0;
     enemy[0].hitWall = false;
+    //----------------------------------------------------------------------------------
+
+    // Rectangle------------------------------------------------------------------------
+    Rectangle playerFrame = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/3, (float)playerTexture[player.texture].height };
+    Rectangle playerFrameStop = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/3, (float)playerTexture[player.texture].height };
+    Rectangle playerBox = { (float)screenWidth/2, (float)screenHeight/2, 50.0, 50.0 };
     Rectangle enemyBox = {150, 150, 50, 50};
-
-    Vector2 origin = {0, 0};
-
+    Rectangle playerAttackBox = { playerBox.x + 50, playerBox.y, 50.0, 50.0 };
     // Rectangle attackFrame = { 0.0f, 0.0f, (float)attack.width/5, (float)attack.height };
-    Rectangle playerAttackBox = { playerBox.x + 50, playerBox.y, 50.0, 50.0};
+    //----------------------------------------------------------------------------------
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
-    Color enemyColor = WHITE;
+    // Vector2--------------------------------------------------------------------------
+    Vector2 origin = {0, 0};
+    //----------------------------------------------------------------------------------
 
-    //UnloadImage(LoadImage("bg_1.png"));
-    //UnloadImage(LoadImage("map.png"));
-  
-    //---------------------------------------------------------------------------------------
+    // Color----------------------------------------------------------------------------
+    // Color enemyColor = WHITE;
+    //----------------------------------------------------------------------------------
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         player.action = 0;
-        enemyColor = WHITE;
         player.state = 0;
         framesCounter++;
-        // Update
-        //----------------------------------------------------------------------------------
+
+        if (theEnemy == 1) {
+            enemyFrames = 0;
+        } else if (theEnemy == 2) {
+            enemyFrames = 4;
+        } else if (theEnemy == 3) {
+            enemyFrames = 8;
+        } else if (theEnemy == 4) {
+            enemyFrames = 12;
+        } else if (theEnemy == 5) {
+            enemyFrames = 16;
+        }
+
+        // Update-----------------------------------------------------------------------
         enemy[0].hitWall = CheckCollisionRecs(playerBox, enemyBox);
         if(!enemy[0].hitWall){
             if(abs(enemyBox.x - playerBox.x) < enemy[0].speed) enemyBox.x = playerBox.x;
@@ -113,6 +160,7 @@ int main()
             if (IsKeyDown(KEY_RIGHT)) {
                 playerBox.x += (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
                 player.texture = 0;
+                enemy[0].texture = 0 + enemyFrames;
                 player.state = 1;
                 if(playerBox.x >= screenWidth - 100)
                     playerBox.x = screenWidth - 100;
@@ -123,6 +171,7 @@ int main()
             if (IsKeyDown(KEY_LEFT)) {
                 playerBox.x -= (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
                 player.texture = 1;
+                enemy[0].texture = 1 + enemyFrames;
                 player.state = 1;
                 if(playerBox.x <= 50)
                     playerBox.x = 50;
@@ -133,6 +182,7 @@ int main()
             if (IsKeyDown(KEY_UP)) {
                 playerBox.y -= (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
                 player.texture = 3;
+                enemy[0].texture = 3 + enemyFrames;
                 player.state = 1;
                 if(playerBox.y <= 50)
                     playerBox.y = 50;
@@ -143,6 +193,7 @@ int main()
             if (IsKeyDown(KEY_DOWN)) {
                 playerBox.y += (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
                 player.texture = 2;
+                enemy[0].texture = 2 + enemyFrames;
                 player.state = 1;
                 if(playerBox.y >= screenHeight - 100)
                     playerBox.y = screenHeight - 100;
@@ -155,7 +206,6 @@ int main()
                 player.action = 1;
                 player.stamina  -= 5;
                 if(CheckCollisionRecs(playerAttackBox, enemyBox)){
-                    enemyColor = BLACK;
                     enemy[0].hp -= player.attack;
                     if(enemy[0].hp <= 0){
                         enemy[0].hp = 0;
@@ -174,18 +224,14 @@ int main()
                 playerFrame.x = (float)currentPlayerFrame*(float)playerTexture[player.texture].width/3;
             }
         }
-        
-        
-
         //----------------------------------------------------------------------------------
 
-        // Draw
-        //----------------------------------------------------------------------------------
+        // Draw------------------------------------------------------------------------------
         BeginDrawing();
 
             ClearBackground(RAYWHITE);
 
-            DrawTexture(texture[1], 0, 0, WHITE);
+            DrawTexture(mapTexture[1], 0, 0, WHITE);
 
             switch(player.state){
                 case 1:
@@ -193,15 +239,15 @@ int main()
                     break;
                 case -1:
                     DrawText("GameOver", screenWidth/2, screenHeight/2 - 35, 70, GRAY);
-                    break;    
+                    break;
                 default:
-                    DrawTexturePro(playerTexture[player.texture], playerFrame2, playerBox, origin, 0.0, WHITE);
+                    DrawTexturePro(playerTexture[player.texture], playerFrameStop, playerBox, origin, 0.0, WHITE);
             }
 
             switch(enemy[0].state){
                 case 1:
                     if(player.state != -1){
-                        DrawRectangleRec(enemyBox, enemyColor);
+                        DrawTexturePro(enemyTexture[enemy[0].texture], playerFrame, enemyBox, origin, 0.0, WHITE);
                         DrawText(FormatText("%d", enemy[0].hp), enemyBox.x, enemyBox.y - 22, 20, GRAY);
                     }
                     break;
@@ -226,18 +272,22 @@ int main()
         //----------------------------------------------------------------------------------
     }
 
-    // De-Initialization
+    // Texture unloading--------------------------------------------------------------------
+    for(int i = 0; i < playerTextureValue; i++)
+    {
+        UnloadTexture(playerTexture[i]);
+    }
+    for(int i = 0; i < mapTextureValue; i++)
+    {
+        UnloadTexture(mapTexture[i]);
+    }
+    for(int i = 0; i < enemyTectureValue; i++)
+    {
+        UnloadTexture(enemyTexture[i]);
+    }
     //--------------------------------------------------------------------------------------
-    UnloadTexture(playerTexture[0]);       // Texture unloading
-    UnloadTexture(playerTexture[1]);
-    UnloadTexture(playerTexture[2]);    // Texture unloading
-    UnloadTexture(playerTexture[3]);
-    UnloadTexture(texture[0]);
-    UnloadTexture(texture[1]);
-    // UnloadTexture(attack);
 
-    CloseWindow();                // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
-
+    CloseWindow();
+    
     return 0;
 }
