@@ -9,7 +9,7 @@ int main()
 {
     // Variable And Config-------------------------------------------------------------------------
     int playerTextureValue = 4;
-    int mapTextureValue = 5;
+    int mapTextureValue = 6;
     int enemyTextureValue = 20;
     int soundFxValue = 1;
     int musicValue = 4;
@@ -78,6 +78,7 @@ int main()
     mapTexture[2] = LoadTexture("../IMG/Maps/Map_3.png");
     mapTexture[3] = LoadTexture("../IMG/Maps/Map_4.png");
     mapTexture[4] = LoadTexture("../IMG/Maps/Map_5.png");
+    mapTexture[5] = LoadTexture("../IMG/Maps/bar.png");
 
     Texture2D titleTexture[titleTextureValue];
     titleTexture[0] = LoadTexture("../IMG/Title/manu.png");
@@ -95,9 +96,11 @@ int main()
 
     // Struct --------------------------------------------------------------------------
     struct Character {
+        int maxHp;
         int hp;
         int attack;
         float speed;
+        int maxStamina;
         int stamina;
         int staminaRecove;
         int texture;
@@ -120,12 +123,12 @@ int main()
         bool hitWall;
     };
 
-    struct Character player = {100, 10, 7, 50, 1, 0, 0, 0, false};
+    struct Character player = {100, 100, 10, 7, 50, 50, 1, 0, 0, 0, false};
 
     struct Enemy enemy[10];
-    enemy[0].type = 1;
+    enemy[0].type = 2;
     enemy[0].hp = 200;
-    enemy[0].attack = 1;
+    enemy[0].attack = 2;
     enemy[0].speed = 4;
     enemy[0].atkDelay = 0.5;
     enemy[0].texture = 0;
@@ -143,6 +146,8 @@ int main()
     Rectangle playerBox = { (float)screenWidth/2, (float)screenHeight/2, 50.0, 50.0 };
     Rectangle playerAttackBox = { playerBox.x + 25, playerBox.y, 50.0, 50.0 };
     Rectangle playerAttackFrame = { 0.0f, 0.0f, 50.0, 50.0};
+    Rectangle playerStamina =  {45, 644, 165.0, 21};
+    Rectangle playerHp =  {45, 686, 165.0, 20};
 
     Rectangle enemyBox[10];
     enemyBox[0].x = 150;
@@ -228,22 +233,39 @@ int main()
 
             switch(enemy[0].type){
                 case 2:
-                    enemy[0].texture += 4;
+                    if(enemy[0].texture == 0) enemy[0].texture = 4;
+                    else if(enemy[0].texture == 1) enemy[0].texture = 5;
+                    else if(enemy[0].texture == 2) enemy[0].texture = 6;
+                    else if(enemy[0].texture == 3) enemy[0].texture = 7;
                     break;
                 case 3:
-                    enemy[0].texture += 8;
+                    if(enemy[0].texture == 0) enemy[0].texture = 8;
+                    else if(enemy[0].texture == 1) enemy[0].texture = 9;
+                    else if(enemy[0].texture == 2) enemy[0].texture = 10;
+                    else if(enemy[0].texture == 3) enemy[0].texture = 11;
                     break;
                 case 4:
-                    enemy[0].texture += 12;
+                    if(enemy[0].texture == 0) enemy[0].texture = 12;
+                    else if(enemy[0].texture == 1) enemy[0].texture = 13;
+                    else if(enemy[0].texture == 2) enemy[0].texture = 14;
+                    else if(enemy[0].texture == 3) enemy[0].texture = 15;
+                    break;
                     break;
                 case 5:
-                    enemy[0].texture += 16;
+                    if(enemy[0].texture == 0) enemy[0].texture = 16;
+                    else if(enemy[0].texture == 1) enemy[0].texture = 17;
+                    else if(enemy[0].texture == 2) enemy[0].texture = 18;
+                    else if(enemy[0].texture == 3) enemy[0].texture = 19;
+                    break;
                     break;
                 default:
                     break;
             }
 
-            if (enemy[0].hitPlayer && framesCounter%7 == 0 && enemy[0].state > -1) player.hp -= enemy[0].attack;
+            if (enemy[0].hitPlayer && framesCounter%7 == 0 && enemy[0].state > -1){
+                player.hp -= enemy[0].attack;
+                playerHp.width = player.hp * 165/player.maxHp;
+            }
 
             if(player.hp <= 0) {
                 player.hp = 0;
@@ -343,6 +365,7 @@ int main()
                 if (enemy[0].frame > 2) enemy[0].frame = 0;
                 enemyFrame[0].x = (float)enemy[0].frame*(float)enemyTexture[enemy[0].texture].width/3;
             }
+            playerStamina.width = player.stamina * 165/player.maxStamina;
             break;
         case 2:
             StopMusicStream(music[1]);
@@ -398,8 +421,9 @@ int main()
                         DrawTexturePro(attackTexture[player.texture], playerAttackFrame, playerAttackBox, origin, 0.0, WHITE);
                 }
                 
-                DrawText(FormatText("Hp %d", player.hp), 10, screenHeight - 40, 25, GREEN);
-                DrawText(FormatText("Stamina %d", player.stamina), 100, screenHeight - 40, 20, BLUE);
+                DrawTexture(mapTexture[5], 0, 80, WHITE);
+                DrawRectangleRec(playerHp, GREEN);
+                DrawRectangleRec(playerStamina, BLUE);
                 break;
             case 2:
                 DrawTexture(titleTexture[1], 0, 0, WHITE);
