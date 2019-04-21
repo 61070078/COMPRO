@@ -289,11 +289,6 @@ int main()
             DrawText(FormatText("Hp %d", player.hp), 10, screenHeight - 40, 25, GREEN);
             DrawText(FormatText("Stamina %d", player.stamina), 100, screenHeight - 40, 20, BLUE);
             
-            DrawText(FormatText("%d", currentAttackFrame), 50, 100, 19, GRAY);
-            DrawText(FormatText("%.1f", playerAttackFrame.x), 50, 120, 19, GRAY);
-            DrawText(FormatText("%.1f", playerAttackFrame.y), 50,  140, 19, GRAY);
-            DrawText(FormatText("%d", player.action), 50,  80, 19, GRAY);
-            
         EndDrawing();
         //----------------------------------------------------------------------------------
     }

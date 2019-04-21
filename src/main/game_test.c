@@ -21,8 +21,6 @@ int main()
     int currentAttackFrame = 0;
     int framesCounter = 0;
     int framesSpeed = 8;
-    int theEnemy = 3;
-    int enemyFrames = 0;
     int valueEnemy = 0;
     int gameState = 0;
     int theMap = 0;
@@ -41,6 +39,12 @@ int main()
     playerTexture[1] = LoadTexture("../IMG/Player/walk_L.png");
     playerTexture[2] = LoadTexture("../IMG/Player/walk_F.png");
     playerTexture[3] = LoadTexture("../IMG/Player/walk_B.png");
+
+    Texture2D attackTexture[4];
+    attackTexture[0] = LoadTexture("../IMG/PLayer/HIT/hit_R.png");
+    attackTexture[1] = LoadTexture("../IMG/PLayer/HIT/hit_L.png");
+    attackTexture[2] = LoadTexture("../IMG/PLayer/HIT/hit_F.png");
+    attackTexture[3] = LoadTexture("../IMG/PLayer/HIT/hit_B.png");
 
     Texture2D enemyTexture[enemyTextureValue];
     enemyTexture[0] = LoadTexture("../IMG/Enemy/EM_1/EM/walk_R.png");
@@ -102,36 +106,55 @@ int main()
         bool hitWall;
     };
 
-    struct Monster {
+    struct Enemy {
+        int type;
         int hp;
         int attack;
         float speed;
         int atkDelay;
         int texture;
+        int frame;
         int state;
         int action;
+        bool hitPlayer;
         bool hitWall;
     };
 
-    struct Character player = {100, 10, 8, 50, 1, 0, 0, 0, false};
+    struct Character player = {100, 10, 7, 50, 1, 0, 0, 0, false};
 
-    struct Monster enemy[5];
+    struct Enemy enemy[10];
+    enemy[0].type = randoms(0, 4);
     enemy[0].hp = 200;
-    enemy[0].attack = 2;
+    enemy[0].attack = 1;
     enemy[0].speed = 4;
-    enemy[0].atkDelay = 50;
+    enemy[0].atkDelay = 0.5;
     enemy[0].texture = 0;
+    enemy[0].frame = 0;
     enemy[0].state = 1;
     enemy[0].action = 0;
+    enemy[0].hitPlayer = false;
     enemy[0].hitWall = false;
+    
     //----------------------------------------------------------------------------------
 
     // Rectangle------------------------------------------------------------------------
     Rectangle playerFrame = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/3, (float)playerTexture[player.texture].height };
     Rectangle playerFrameStop = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/3, (float)playerTexture[player.texture].height };
     Rectangle playerBox = { (float)screenWidth/2, (float)screenHeight/2, 50.0, 50.0 };
-    Rectangle enemyBox = {150, 150, 50, 50};
-    Rectangle playerAttackBox = { playerBox.x + 50, playerBox.y, 50.0, 50.0 };
+    Rectangle playerAttackBox = { playerBox.x + 25, playerBox.y, 50.0, 50.0 };
+    Rectangle playerAttackFrame = { 0.0f, 0.0f, 50.0, 50.0};
+
+    Rectangle enemyBox[10];
+    enemyBox[0].x = 150;
+    enemyBox[0].y = 150;
+    enemyBox[0].width = 50;
+    enemyBox[0].height = 50;
+
+    Rectangle enemyFrame[10];
+    enemyFrame[0].x = 0;
+    enemyFrame[0].y = 0;
+    enemyFrame[0].width = 50;
+    enemyFrame[0].height = 50;
     // Rectangle attackFrame = { 0.0f, 0.0f, (float)attack.width/5, (float)attack.height };
     //----------------------------------------------------------------------------------
 
@@ -167,100 +190,112 @@ int main()
                 gameState = 1;
                 player.hp = 100;
                 theMap = randoms(0, 4);
-                theEnemy = randoms(1, 5);
             }
             break;
         case 1:
             StopMusicStream(music[0]);
             PlayMusicStream(music[1]);
-            player.action = 0;
             player.state = 0;
             framesCounter++;
 
-            if (theEnemy == 1) {
-                enemyFrames = 0;
-            } else if (theEnemy == 2) {
-                enemyFrames = 4;
-            } else if (theEnemy == 3) {
-                enemyFrames = 8;
-            } else if (theEnemy == 4) {
-                enemyFrames = 12;
-            } else if (theEnemy == 5) {
-                enemyFrames = 16;
+            // Update
+            //----------------------------------------------------------------------------------
+            enemy[0].hitPlayer = CheckCollisionRecs(playerBox, enemyBox[0]);
+            if(!enemy[0].hitPlayer){
+                float distanceX = abs(enemyBox[0].x - playerBox.x);
+                float distanceY = abs(enemyBox[0].y - playerBox.y);
+                if((distanceX <= distanceY && distanceX != 0) || distanceY == 0){
+                    if(enemyBox[0].x < playerBox.x){
+                        enemy[0].texture = 0;
+                        enemyBox[0].x += enemy[0].speed;
+                    } else if(enemyBox[0].x > playerBox.x){
+                        enemy[0].texture = 1;
+                        enemyBox[0].x -= enemy[0].speed;
+                    }
+                    if(distanceX < enemy[0].speed) enemyBox[0].x = playerBox.x;
+                } else {
+                    if(enemyBox[0].y < playerBox.y){
+                        enemy[0].texture = 2;
+                        enemyBox[0].y += enemy[0].speed;
+                    }
+                    else if(enemyBox[0].y > playerBox.y){
+                        enemy[0].texture = 3;
+                        enemyBox[0].y -= enemy[0].speed;
+                    }
+                    if(distanceY < enemy[0].speed) enemyBox[0].y = playerBox.y;   
+                }
             }
 
-            // Update-----------------------------------------------------------------------
-            enemy[0].hitWall = CheckCollisionRecs(playerBox, enemyBox);
-
-            if(!enemy[0].hitWall){
-                if(abs(enemyBox.x - playerBox.x) < enemy[0].speed) enemyBox.x = playerBox.x;  
-                else if(enemyBox.x < playerBox.x) enemyBox.x += enemy[0].speed;
-                else if(enemyBox.x > playerBox.x) enemyBox.x -= enemy[0].speed;
-            
-                if(abs(enemyBox.y - playerBox.y) < enemy[0].speed) enemyBox.y = playerBox.y;
-                else if(enemyBox.y < playerBox.y) enemyBox.y += enemy[0].speed;
-                else if(enemyBox.y > playerBox.y) enemyBox.y -= enemy[0].speed;    
-            } else if (enemy[0].hitWall && framesCounter%7 == 0 && enemy[0].state > -1) {
-                PlaySound(soundFx[0]);
-                player.hp -= enemy[0].attack;
+            switch(enemy[0].type){
+                case 2:
+                    enemy[0].texture += 4;
+                    break;
+                case 3:
+                    enemy[0].texture += 8;
+                    break;
+                case 4:
+                    enemy[0].texture += 12;
+                    break;
+                case 5:
+                    enemy[0].texture += 16;
+                    break;
+                default:
+                    break;
             }
-            
+
+            if (enemy[0].hitWall && framesCounter%7 == 0 && enemy[0].state > -1) player.hp -= enemy[0].attack;
+
             if(player.hp <= 0) {
                 player.hp = 0;
                 player.state = -1;
                 gameState = 2;
-            } else {
-                
+            } else { 
                 if (IsKeyDown(KEY_RIGHT)) {
-                    playerBox.x += (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
+                    playerBox.x += (player.speed - CheckCollisionRecs(playerBox, enemyBox[0])*0.4*player.speed);
                     player.texture = 0;
-                    enemy[0].texture = 0 + enemyFrames;
                     player.state = 1;
                     if(playerBox.x >= screenWidth - 100)
                         playerBox.x = screenWidth - 100;
 
-                    playerAttackBox.x = playerBox.x + 50;
+                    playerAttackBox.x = playerBox.x + 25;
                     playerAttackBox.y = playerBox.y;
                 }
                 if (IsKeyDown(KEY_LEFT)) {
-                    playerBox.x -= (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
+                    playerBox.x -= (player.speed - CheckCollisionRecs(playerBox, enemyBox[0])*0.4*player.speed);
                     player.texture = 1;
-                    enemy[0].texture = 1 + enemyFrames;
                     player.state = 1;
                     if(playerBox.x <= 50)
                         playerBox.x = 50;
 
-                    playerAttackBox.x = playerBox.x - 50;
+                    playerAttackBox.x = playerBox.x - 25;
                     playerAttackBox.y = playerBox.y;    
                 }
                 if (IsKeyDown(KEY_UP)) {
-                    playerBox.y -= (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
+                    playerBox.y -= (player.speed - CheckCollisionRecs(playerBox, enemyBox[0])*0.4*player.speed);
                     player.texture = 3;
-                    enemy[0].texture = 3 + enemyFrames;
                     player.state = 1;
                     if(playerBox.y <= 50)
                         playerBox.y = 50;
 
                     playerAttackBox.x = playerBox.x;
-                    playerAttackBox.y = playerBox.y - 50;
+                    playerAttackBox.y = playerBox.y - 25;
                 }
                 if (IsKeyDown(KEY_DOWN)) {
-                    playerBox.y += (player.speed - CheckCollisionRecs(playerBox, enemyBox)*0.4*player.speed);
+                    playerBox.y += (player.speed - CheckCollisionRecs(playerBox, enemyBox[0])*0.4*player.speed);
                     player.texture = 2;
-                    enemy[0].texture = 2 + enemyFrames;
                     player.state = 1;
                     if(playerBox.y >= screenHeight - 100)
                         playerBox.y = screenHeight - 100;
 
                     playerAttackBox.x = playerBox.x;
-                    playerAttackBox.y = playerBox.y + 50;      
+                    playerAttackBox.y = playerBox.y + 25;      
                 }
 
                 if (IsKeyPressed(KEY_SPACE) && player.stamina >= 5) {
                     PlaySound(soundFx[0]);
                     player.action = 1;
                     player.stamina  -= 5;
-                    if(CheckCollisionRecs(playerAttackBox, enemyBox)){
+                    if(CheckCollisionRecs(playerAttackBox, enemyBox[0])){
                         enemy[0].hp -= player.attack;
                         if(enemy[0].hp <= 0){
                             enemy[0].hp = 0;
@@ -268,16 +303,45 @@ int main()
                         }
                     }
                 }
+            }
 
-                if (framesCounter >= (60/framesSpeed))
-                {
-                    framesCounter = 0;
-                    currentPlayerFrame++;
-                    player.stamina += player.staminaRecove;
-                    if(player.stamina > 50) player.stamina = 50;
-                    if (currentPlayerFrame > 5) currentPlayerFrame = 0;
-                    playerFrame.x = (float)currentPlayerFrame*(float)playerTexture[player.texture].width/3;
+            if(player.action > 0){
+                player.action ++;
+                if(player.action % 3 == 0) currentAttackFrame ++;
+                else if (player.action > 16){
+                    player.action = 0;
+                    currentAttackFrame = 0;                    
                 }
+                switch(player.texture){
+                    case 0:
+                    case 1:
+                        if (currentAttackFrame > 4) currentAttackFrame = 0;
+                        playerAttackFrame.y = (float)currentAttackFrame*(float)attackTexture[player.texture].height/5;
+                        playerAttackFrame.x = 0;
+                        break;
+                    case 2:
+                    case 3:
+                        if (currentAttackFrame > 4) currentAttackFrame = 0;
+                        playerAttackFrame.x = (float)currentAttackFrame*(float)attackTexture[player.texture].width/5;
+                        playerAttackFrame.y = 0;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (framesCounter >= (60/framesSpeed))
+            {
+                framesCounter = 0;
+                if (player.state > 0) currentPlayerFrame++;
+                player.stamina += player.staminaRecove;
+                if(player.stamina > 50) player.stamina = 50;
+                if (currentPlayerFrame > 2) currentPlayerFrame = 0;
+                playerFrame.x = (float)currentPlayerFrame*(float)playerTexture[player.texture].width/3;
+
+                enemy[0].frame ++;
+                if (enemy[0].frame > 2) enemy[0].frame = 0;
+                enemyFrame[0].x = (float)enemy[0].frame*(float)enemyTexture[enemy[0].texture].width/3;
             }
             break;
         case 2:
@@ -317,22 +381,21 @@ int main()
                 }
 
                 switch(enemy[0].state){
-                    case 1:
-                        if(player.state != -1){
-                            DrawTexturePro(enemyTexture[enemy[0].texture], playerFrame, enemyBox, origin, 0.0, WHITE);
-                            DrawText(FormatText("%d", enemy[0].hp), enemyBox.x, enemyBox.y - 22, 20, GRAY);
-                        }
-                        break;
-                    default:
-                        break;
+                case 1:
+                    if(player.state != -1){
+                        DrawTexturePro(enemyTexture[enemy[0].texture], enemyFrame[0], enemyBox[0], origin, 0.0, WHITE);
+                        DrawText(FormatText("%d", enemy[0].hp), enemyBox[0].x, enemyBox[0].y - 22, 20, GRAY);
+                    }
+                    break;
+                default:
+                    break;
                 }
-
+         
                 switch(player.action){
-                    case 1:
-                        DrawRectangleRec(playerAttackBox, RED);
+                    case 0:
                         break;
                     default:
-                        if(player.state != -1) DrawRectangleRec(playerAttackBox, WHITE);
+                        DrawTexturePro(attackTexture[player.texture], playerAttackFrame, playerAttackBox, origin, 0.0, WHITE);
                 }
                 
                 DrawText(FormatText("Hp %d", player.hp), 10, screenHeight - 40, 25, GREEN);
