@@ -10,7 +10,11 @@ int main()
     // Variable And Config-------------------------------------------------------------------------
     int playerTextureValue = 4;
     int mapTextureValue = 5;
-    int enemyTectureValue = 20;
+    int enemyTextureValue = 20;
+    int soundFxValue = 1;
+    int musicValue = 4;
+    int titleTextureValue = 2;
+
     int screenWidth = 1280;
     int screenHeight = 720;
     int currentPlayerFrame = 0;
@@ -25,7 +29,7 @@ int main()
     //----------------------------------------------------------------------------------
 
     // Set Window----------------------------------------------------------------------
-    InitWindow(screenWidth, screenHeight, "Game Beta");
+    InitWindow(screenWidth, screenHeight, "Lost Fantasy");
     InitAudioDevice(); 
     SetTargetFPS(60); 
     //----------------------------------------------------------------------------------
@@ -38,7 +42,7 @@ int main()
     playerTexture[2] = LoadTexture("../IMG/Player/walk_F.png");
     playerTexture[3] = LoadTexture("../IMG/Player/walk_B.png");
 
-    Texture2D enemyTexture[enemyTectureValue];
+    Texture2D enemyTexture[enemyTextureValue];
     enemyTexture[0] = LoadTexture("../IMG/Enemy/EM_1/EM/walk_R.png");
     enemyTexture[1] = LoadTexture("../IMG/Enemy/EM_1/EM/walk_L.png");
     enemyTexture[2] = LoadTexture("../IMG/Enemy/EM_1/EM/walk_F.png");
@@ -71,15 +75,18 @@ int main()
     mapTexture[3] = LoadTexture("../IMG/Maps/Map_4.png");
     mapTexture[4] = LoadTexture("../IMG/Maps/Map_5.png");
 
-    Texture2D titleTexture[2];
+    Texture2D titleTexture[titleTextureValue];
     titleTexture[0] = LoadTexture("../IMG/Title/manu.png");
     titleTexture[1] = LoadTexture("../IMG/Title/gameOver.png");
 
-    Music music[4];
+    Music music[musicValue];
     music[0] = LoadMusicStream("../Audio/Manu/Theme1.ogg");
     music[1] = LoadMusicStream("../Audio/Battle/Battle.ogg");
     music[2] = LoadMusicStream("../Audio/Attack/Attack.ogg");
     music[3] = LoadMusicStream("../Audio/GameOver/Gameover.ogg");
+
+    Sound soundFx[soundFxValue];
+    soundFx[0] = LoadSound("../Audio/Attack/Attack.ogg");
     //----------------------------------------------------------------------------------
 
     // Struct --------------------------------------------------------------------------
@@ -160,6 +167,7 @@ int main()
                 gameState = 1;
                 player.hp = 100;
                 theMap = randoms(0, 4);
+                theEnemy = randoms(1, 5);
             }
             break;
         case 1:
@@ -192,7 +200,10 @@ int main()
                 if(abs(enemyBox.y - playerBox.y) < enemy[0].speed) enemyBox.y = playerBox.y;
                 else if(enemyBox.y < playerBox.y) enemyBox.y += enemy[0].speed;
                 else if(enemyBox.y > playerBox.y) enemyBox.y -= enemy[0].speed;    
-            } else if (enemy[0].hitWall && framesCounter%7 == 0 && enemy[0].state > -1) player.hp -= enemy[0].attack;
+            } else if (enemy[0].hitWall && framesCounter%7 == 0 && enemy[0].state > -1) {
+                PlaySound(soundFx[0]);
+                player.hp -= enemy[0].attack;
+            }
             
             if(player.hp <= 0) {
                 player.hp = 0;
@@ -246,6 +257,7 @@ int main()
                 }
 
                 if (IsKeyPressed(KEY_SPACE) && player.stamina >= 5) {
+                    PlaySound(soundFx[0]);
                     player.action = 1;
                     player.stamina  -= 5;
                     if(CheckCollisionRecs(playerAttackBox, enemyBox)){
@@ -348,18 +360,23 @@ int main()
     {
         UnloadTexture(mapTexture[i]);
     }
-    for(int i = 0; i < enemyTectureValue; i++)
+    for(int i = 0; i < enemyTextureValue; i++)
     {
         UnloadTexture(enemyTexture[i]);
     }
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < titleTextureValue; i++)
     {
         UnloadTexture(titleTexture[i]);
     }
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < musicValue; i++)
     {
         UnloadMusicStream(music[i]);
     }
+    for (int i = 0; i < soundFxValue; i++)
+    {
+        UnloadSound(soundFx[i]);
+    }
+    
     //--------------------------------------------------------------------------------------
 
     CloseAudioDevice();
