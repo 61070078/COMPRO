@@ -50,7 +50,7 @@ int main()
         bool hitWall;
     };
 
-    struct Monster {
+    struct Enemy {
         int type;
         int hp;
         int attack;
@@ -69,7 +69,7 @@ int main()
     Rectangle playerFrame2 = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/3, (float)playerTexture[player.texture].height };
     Rectangle playerBox = { (float)screenWidth/2, (float)screenHeight/2, 50.0, 50.0};
 
-    struct Monster enemy[10];
+    struct Enemy enemy[10];
     enemy[0].type = 1;
     enemy[0].hp = 200;
     enemy[0].attack = 1;
