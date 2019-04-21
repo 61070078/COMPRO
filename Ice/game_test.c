@@ -38,8 +38,6 @@ int main()
     texture[0] = LoadTextureFromImage(LoadImage("bg_1.png"));
     texture[1] = LoadTextureFromImage(LoadImage("map.png"));
     
-    
-
     struct Character {
         int hp;
         int attack;
@@ -62,10 +60,11 @@ int main()
         int frame;
         int state;
         int action;
+        bool hitPlayer;
         bool hitWall;
     };
 
-    struct Character player = {100, 10, 8, 50, 1, 0, 0, 0, false};
+    struct Character player = {100, 10, 7, 50, 1, 0, 0, 0, false};
     Rectangle playerFrame = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/3, (float)playerTexture[player.texture].height };
     Rectangle playerFrame2 = { 0.0f, 0.0f, (float)playerTexture[player.texture].width/3, (float)playerTexture[player.texture].height };
     Rectangle playerBox = { (float)screenWidth/2, (float)screenHeight/2, 50.0, 50.0};
@@ -80,6 +79,7 @@ int main()
     enemy[0].frame = 0;
     enemy[0].state = 1;
     enemy[0].action = 0;
+    enemy[0].hitPlayer = false;
     enemy[0].hitWall = false;
     
     Rectangle enemyBox[10];
@@ -116,8 +116,8 @@ int main()
         framesCounter++;
         // Update
         //----------------------------------------------------------------------------------
-        enemy[0].hitWall = CheckCollisionRecs(playerBox, enemyBox[0]);
-        if(!enemy[0].hitWall){
+        enemy[0].hitPlayer = CheckCollisionRecs(playerBox, enemyBox[0]);
+        if(!enemy[0].hitPlayer){
             float distanceX = abs(enemyBox[0].x - playerBox.x);
             float distanceY = abs(enemyBox[0].y - playerBox.y);
             if((distanceX <= distanceY && distanceX != 0) || distanceY == 0){
@@ -140,7 +140,8 @@ int main()
                 }
                 if(distanceY < enemy[0].speed) enemyBox[0].y = playerBox.y;   
             }
-        }   
+        }
+
         if (enemy[0].hitWall && framesCounter%7 == 0 && enemy[0].state > -1) player.hp -= enemy[0].attack;
         
         if(player.hp <= 0) {
@@ -233,7 +234,7 @@ int main()
             if (framesCounter >= (60/framesSpeed))
             {
                 framesCounter = 0;
-                currentPlayerFrame++;
+                if (player.state > 0) currentPlayerFrame++;
                 player.stamina += player.staminaRecove;
                 if(player.stamina > 50) player.stamina = 50;
                 if (currentPlayerFrame > 2) currentPlayerFrame = 0;
@@ -293,8 +294,6 @@ int main()
             DrawText(FormatText("%.1f", playerAttackFrame.y), 50,  140, 19, GRAY);
             DrawText(FormatText("%d", player.action), 50,  80, 19, GRAY);
             
-
-
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
