@@ -28,11 +28,11 @@ int main()
     attackTexture[2] = LoadTexture("D:/work/project/COMPRO/src/IMG/HITBOX/hit_B.png");
     attackTexture[3] = LoadTexture("D:/work/project/COMPRO/src/IMG/HITBOX/hit_F.png");
     
-    Texture2D enemyTexture1[4];
-    enemyTexture1[0] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_R.png");
-    enemyTexture1[1] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_L.png");
-    enemyTexture1[2] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_B.png");
-    enemyTexture1[3] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_F.png");
+    Texture2D enemyTexture[4];
+    enemyTexture[0] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_R.png");
+    enemyTexture[1] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_L.png");
+    enemyTexture[2] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_B.png");
+    enemyTexture[3] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_F.png");
      // Loading PNG--------------------------------------------------------------------------
     Texture2D texture[2];
     texture[0] = LoadTextureFromImage(LoadImage("bg_1.png"));
@@ -242,7 +242,7 @@ int main()
 
                 enemy[0].frame ++;
                 if (enemy[0].frame > 2) enemy[0].frame = 0;
-                enemyFrame[0].x = (float)enemy[0].frame*(float)enemyTexture1[enemy[0].texture].width/3;
+                enemyFrame[0].x = (float)enemy[0].frame*(float)enemyTexture[enemy[0].texture].width/3;
             }
        
         
@@ -271,7 +271,7 @@ int main()
             switch(enemy[0].state){
                 case 1:
                     if(player.state != -1){
-                        DrawTexturePro(enemyTexture1[enemy[0].texture], enemyFrame[0], enemyBox[0], origin, 0.0, WHITE);
+                        DrawTexturePro(enemyTexture[enemy[0].texture], enemyFrame[0], enemyBox[0], origin, 0.0, WHITE);
                         DrawText(FormatText("%d", enemy[0].hp), enemyBox[0].x, enemyBox[0].y - 22, 20, GRAY);
                     }
                     break;
@@ -308,10 +308,10 @@ int main()
     UnloadTexture(attackTexture[1]);       // Texture unloading
     UnloadTexture(attackTexture[2]);       // Texture unloading
     UnloadTexture(attackTexture[3]);       // Texture unloading
-    UnloadTexture(enemyTexture1[0]);       // Texture unloading
-    UnloadTexture(enemyTexture1[1]);       // Texture unloading
-    UnloadTexture(enemyTexture1[2]);       // Texture unloading
-    UnloadTexture(enemyTexture1[3]);       // Texture unloading
+    UnloadTexture(enemyTexture[0]);       // Texture unloading
+    UnloadTexture(enemyTexture[1]);       // Texture unloading
+    UnloadTexture(enemyTexture[2]);       // Texture unloading
+    UnloadTexture(enemyTexture[3]);       // Texture unloading
     UnloadTexture(texture[0]);
     UnloadTexture(texture[1]);
     // UnloadTexture(attack);
