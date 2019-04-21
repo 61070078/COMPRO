@@ -6,15 +6,15 @@ int main()
     //--------------------------------------------------------------------------------------
     int screenWidth = 1280;
     int screenHeight = 720;
-    int gravity = 10;
+    int border = 100;
 
-    int playNumber = 1;
+    int playNumber = 0;
     int playerSpeed = 6.5;
     int playerState = 0; // Player not move
     int playerAttack = 10;
     int playerHp = 100;
 
-    int attackState = 0;
+    int actionState = 0;
 
     int enemyHp = 150;
     int enemyState = 1;
@@ -23,8 +23,7 @@ int main()
     int currentAttackFrame = 0;
     int framesCounter = 0;
     int framesSpeed = 8;     // Number of spritesheet frames shown by second
-    int jumpCounter = 0;
-    int checkJump = 1;
+    int actionCounter = 0;
 
     InitWindow(screenWidth, screenHeight, "raylib [texture] example - texture rectangle");
 
@@ -32,20 +31,18 @@ int main()
     Texture2D player[4];
     player[0] = LoadTexture("../src/IMG/player/3_KNIGHT/_WALK/walk_R.png");        // Texture loading
     player[1] = LoadTexture("../src/IMG/player/3_KNIGHT/_WALK/walk_L.png");        // Texture loading
-    player[2] = LoadTexture("../src/IMG/player/3_KNIGHT/_ATTACK/att_R.png");        // Texture loading
-    player[3] = LoadTexture("../src/IMG/player/3_KNIGHT/_ATTACK/att_L.png"); 
 
     Rectangle playerFrame = { 0.0f, 0.0f, (float)player[playNumber].width/7, (float)player[playNumber].height };
     Rectangle playerFrame2 = { 0.0f, 0.0f, (float)player[playNumber].width/7, (float)player[playNumber].height };
-    Rectangle playerHitbox = { (float)screenWidth/2, (float)screenHeight/2, (float)player[playNumber].width/7, 100.0};
-    Vector2 playerOrigin = {50, 50};
-
-    Texture2D attack = LoadTexture("slash.png");
-    Rectangle attackFrame = { 0.0f, 0.0f, (float)attack.width/5, (float)attack.height };
-    Rectangle playerAttackBox = { playerHitbox.x + 75, playerHitbox.y, 100.0, 100.0};
+    Rectangle playerBox = { (float)screenWidth/2, (float)screenHeight/2, (float)player[playNumber].width/7, (float)player[playNumber].height};
+    Vector2 playerOrigin = {playerBox.width/2, playerBox.height/2};
+    
+    Texture2D attack = LoadTexture("../src/IMG/player/3_KNIGHT/_ATTACK/slash.png");
+    Rectangle attackFrame = { 0.0f, 0.0f, (float)attack.width/5, (float)attack.height};
+    Rectangle playerAttackBox = { playerBox.x + 75, playerBox.y, 50.0, 100.0};
     Vector2 attackOrigin = {25, 50};
 
-    Vector2 enemyPosition = {150, 150};
+    Rectangle enemyBox = {100, 100, (float)player[playNumber].height};
 
     Rectangle ground = {0.0, 620.0, (float)screenWidth, 100.0};
 
@@ -67,85 +64,68 @@ int main()
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        if(attackState == 0) playerState = 0;
-        playerHitbox.y += gravity;
-        gravity += 0.1;
-        if(playerHitbox.y >= 570){
-            playerHitbox.y = 570;
-            checkJump = 1;
-            gravity = 0;
-        }
+        
         framesCounter++;
+        if(actionState > 0) actionCounter ++;
+        
+        int playerTemp = playNumber;
+
+        if(actionState == 0) playerState = 0;
         // Update
         //----------------------------------------------------------------------------------
+
         if (IsKeyDown(KEY_RIGHT)) {
-            playerHitbox.x += playerSpeed;
+            playerBox.x += playerSpeed;
             playNumber = 0;
             playerState = 1;
-            if(playerHitbox.x >= screenWidth - 100)
-                playerHitbox.x = screenWidth - 100;
+            if(playerBox.x >= screenWidth - border) playerBox.x = screenWidth - border;
 
-            playerAttackBox.x = playerHitbox.x + 75;
-            playerAttackBox.y = playerHitbox.y;
-
+            playerAttackBox.x = playerBox.x + 75;
+            playerAttackBox.y = playerBox.y;
         }
+        
         if (IsKeyDown(KEY_LEFT)) {
-            playerHitbox.x -= playerSpeed;
+            playerBox.x -= playerSpeed;
             playNumber = 1;
             playerState = 1;
-            if(playerHitbox.x <= 100)
-                playerHitbox.x = 100;
- 
-            playerAttackBox.x = playerHitbox.x - 75;
-            playerAttackBox.y = playerHitbox.y;    
-        }
-        if (IsKeyDown(KEY_UP) && checkJump == 1) {
-            checkJump = 0;
-            gravity = -10;
-        }
-        if (IsKeyDown(KEY_DOWN)) {     
+            if(playerBox.x <= border) playerBox.x = border;
+
+            playerAttackBox.x = playerBox.x - 75;
+            playerAttackBox.y = playerBox.y;    
         }
 
-        int playerTemp = playNumber;
+        if (IsKeyDown(KEY_UP)) {
+            playerBox.y -= playerSpeed;
+            playerState = 1;
+            if(playerBox.y <= border) playerBox.y = border;
+
+            playerAttackBox.x = playerBox.x;
+            playerAttackBox.y = playerBox.y - 75;    
+        }
+
+        if (IsKeyDown(KEY_DOWN)) {
+            playerBox.y += playerSpeed;
+            playerState = 1;
+            if(playerBox.y >= screenHeight - border) playerBox.y = screenHeight - border;
+
+            playerAttackBox.x = playerBox.y;
+            playerAttackBox.y = playerBox.y + 75;    
+        }
         
-        if (IsKeyPressed(KEY_SPACE) && attackState == 0) {
+        if (IsKeyPressed(KEY_SPACE) && actionState == 0) {
             currentPlayerFrame = 0;
             playerState = 1;
-            attackState = 1;
-            switch(playerTemp){
-                case 0:
-                    playNumber = 2;
-                    break;
-                case 1:
-                    playNumber = 3;
-                    break;
-                default:
-                    break;
-            }
-        }
-        if(checkJump == 0) jumpCounter ++;
-        if(jumpCounter >= 24){
-            gravity = 10;
-            jumpCounter = 0;
+            actionState = 1;
         }
 
         if (framesCounter >= (60/framesSpeed))
         {
             framesCounter = 0;
-        
             currentPlayerFrame++;
-            if (currentPlayerFrame > 6 && attackState == 1){
-                currentPlayerFrame = 0;
-                playNumber = playerTemp;
-                attackState = 0;
-            }
-            else if (currentPlayerFrame > 6 ) currentPlayerFrame = 0;
-            
+            if (currentPlayerFrame > 6 ) currentPlayerFrame = 0;
             playerFrame.x = (float)currentPlayerFrame*(float)player[playNumber].width/7;
             
         }
-
-        //----------------------------------------------------------------------------------
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -157,27 +137,33 @@ int main()
 
             switch(playerState){
                 case 1:
-                    DrawTexturePro(player[playNumber], playerFrame, playerHitbox, playerOrigin, 0.0, WHITE);
+                    DrawTexturePro(player[playNumber], playerFrame, playerBox, playerOrigin, 0.0, WHITE);
                     break;
                 default:
-                    DrawTexturePro(player[playNumber], playerFrame2, playerHitbox, playerOrigin, 0.0, WHITE);
+                    DrawTexturePro(player[playNumber], playerFrame2, playerBox, playerOrigin, 0.0, WHITE);
+            }
+            
+            DrawText(FormatText("HP %d", playerHp), 20, screenHeight - 40, 30, GREEN);
+            
+            DrawText(FormatText("%f", playerBox.y), 20, 31, 20, GRAY);
+            DrawText(FormatText("%f", playerFrame.x), 20, 71, 20, GRAY);        
+
+            switch(enemyState){
+               case 1:
+                    DrawText(FormatText("%d", enemyHp), enemyBox.x, enemyBox.y - 22, 20, GRAY);
+                    DrawRectangleRec(enemyBox, enemyColor);
+                    break;
+               default:
+                    break;
             }
 
-            DrawRectangleRec(ground, BLACK);
-            DrawText(FormatText("%d", checkJump), 20, 10, 20, GRAY);
-            DrawText(FormatText("%d", playerHitbox.y), 20, 31, 20, GRAY);            
-
-            // switch(enemyState){
-            //     case 1:
-            //         DrawText(FormatText("%d", enemyHp), enemyPosition.x, enemyPosition.y - 22, 20, GRAY);
-            //         break;
-            //     default:
-            //         break;
-            // }
-
-            // switch(attackState){
-            //     case 1:
-            // }
+            switch(actionState){
+                case 1:
+                    DrawRectangleRec(playerAttackBox, RED);
+                    break;
+                default:
+                    DrawRectangleRec(playerAttackBox, WHITE);
+            }
 
         EndDrawing();
         //----------------------------------------------------------------------------------
