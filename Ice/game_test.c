@@ -17,22 +17,22 @@ int main()
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     Texture2D playerTexture[4];
-    playerTexture[0] = LoadTexture("D:/work/project/COMPRO/src/IMG/Player/walk_R.png");
-    playerTexture[1] = LoadTexture("D:/work/project/COMPRO/src/IMG/Player/walk_L.png");
-    playerTexture[2] = LoadTexture("D:/work/project/COMPRO/src/IMG/Player/walk_B.png"); 
-    playerTexture[3] = LoadTexture("D:/work/project/COMPRO/src/IMG/Player/walk_F.png");
+    playerTexture[0] = LoadTexture("../src/IMG/Player/walk_R.png");
+    playerTexture[1] = LoadTexture("../src/IMG/Player/walk_L.png");
+    playerTexture[2] = LoadTexture("../src/IMG/Player/walk_B.png"); 
+    playerTexture[3] = LoadTexture("../src/IMG/Player/walk_F.png");
     
     Texture2D attackTexture[4];
-    attackTexture[0] = LoadTexture("D:/work/project/COMPRO/src/IMG/HITBOX/hit_R.png");
-    attackTexture[1] = LoadTexture("D:/work/project/COMPRO/src/IMG/HITBOX/hit_L.png");
-    attackTexture[2] = LoadTexture("D:/work/project/COMPRO/src/IMG/HITBOX/hit_B.png");
-    attackTexture[3] = LoadTexture("D:/work/project/COMPRO/src/IMG/HITBOX/hit_F.png");
+    attackTexture[0] = LoadTexture("../src/IMG/PLayer/HIT/hit_R.png");
+    attackTexture[1] = LoadTexture("../src/IMG/PLayer/HIT/hit_L.png");
+    attackTexture[2] = LoadTexture("../src/IMG/PLayer/HIT/hit_B.png");
+    attackTexture[3] = LoadTexture("../src/IMG/PLayer/HIT/hit_F.png");
     
     Texture2D enemyTexture[4];
-    enemyTexture[0] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_R.png");
-    enemyTexture[1] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_L.png");
-    enemyTexture[2] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_B.png");
-    enemyTexture[3] = LoadTexture("D:/work/project/COMPRO/src/IMG/Enemy/EM_1/EM/walk_F.png");
+    enemyTexture[0] = LoadTexture("../src/IMG/Enemy/EM_1/EM/walk_R.png");
+    enemyTexture[1] = LoadTexture("../src/IMG/Enemy/EM_1/EM/walk_L.png");
+    enemyTexture[2] = LoadTexture("../src/IMG/Enemy/EM_1/EM/walk_B.png");
+    enemyTexture[3] = LoadTexture("../src/IMG/Enemy/EM_1/EM/walk_F.png");
      // Loading PNG--------------------------------------------------------------------------
     Texture2D texture[2];
     texture[0] = LoadTextureFromImage(LoadImage("bg_1.png"));
@@ -74,7 +74,7 @@ int main()
     enemy[0].hp = 200;
     enemy[0].attack = 1;
     enemy[0].speed = 4;
-    enemy[0].atkDelay = 50;
+    enemy[0].atkDelay = 0.5;
     enemy[0].texture = 0;
     enemy[0].frame = 0;
     enemy[0].state = 1;
@@ -206,44 +206,44 @@ int main()
     
         }
         
-         if(player.action > 0){
-                player.action ++;
-                if(player.action % 3 == 0) currentAttackFrame ++;
-                else if (player.action > 16){
-                    player.action = 0;
-                    currentAttackFrame = 0;                    
-                }
-                switch(player.texture){
-                    case 0:
-                    case 1:
-                        if (currentAttackFrame > 4) currentAttackFrame = 0;
-                        playerAttackFrame.y = (float)currentAttackFrame*(float)attackTexture[player.texture].height/5;
-                        playerAttackFrame.x = 0;
-                        break;
-                    case 2:
-                    case 3:
-                        if (currentAttackFrame > 4) currentAttackFrame = 0;
-                        playerAttackFrame.x = (float)currentAttackFrame*(float)attackTexture[player.texture].width/5;
-                        playerAttackFrame.y = 0;
-                        break;
-                    default:
-                        break;
-                }
+        if(player.action > 0){
+            player.action ++;
+            if(player.action % 3 == 0) currentAttackFrame ++;
+            else if (player.action > 16){
+                player.action = 0;
+                currentAttackFrame = 0;                    
             }
-
-            if (framesCounter >= (60/framesSpeed))
-            {
-                framesCounter = 0;
-                if (player.state > 0) currentPlayerFrame++;
-                player.stamina += player.staminaRecove;
-                if(player.stamina > 50) player.stamina = 50;
-                if (currentPlayerFrame > 2) currentPlayerFrame = 0;
-                playerFrame.x = (float)currentPlayerFrame*(float)playerTexture[player.texture].width/3;
-
-                enemy[0].frame ++;
-                if (enemy[0].frame > 2) enemy[0].frame = 0;
-                enemyFrame[0].x = (float)enemy[0].frame*(float)enemyTexture[enemy[0].texture].width/3;
+            switch(player.texture){
+                case 0:
+                case 1:
+                    if (currentAttackFrame > 4) currentAttackFrame = 0;
+                    playerAttackFrame.y = (float)currentAttackFrame*(float)attackTexture[player.texture].height/5;
+                    playerAttackFrame.x = 0;
+                    break;
+                case 2:
+                case 3:
+                    if (currentAttackFrame > 4) currentAttackFrame = 0;
+                    playerAttackFrame.x = (float)currentAttackFrame*(float)attackTexture[player.texture].width/5;
+                    playerAttackFrame.y = 0;
+                    break;
+                default:
+                    break;
             }
+        }
+
+        if (framesCounter >= (60/framesSpeed))
+        {
+            framesCounter = 0;
+            if (player.state > 0) currentPlayerFrame++;
+            player.stamina += player.staminaRecove;
+            if(player.stamina > 50) player.stamina = 50;
+            if (currentPlayerFrame > 2) currentPlayerFrame = 0;
+            playerFrame.x = (float)currentPlayerFrame*(float)playerTexture[player.texture].width/3;
+
+            enemy[0].frame ++;
+            if (enemy[0].frame > 2) enemy[0].frame = 0;
+            enemyFrame[0].x = (float)enemy[0].frame*(float)enemyTexture[enemy[0].texture].width/3;
+        }
        
         
 
