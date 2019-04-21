@@ -70,7 +70,7 @@ int main()
     Rectangle playerBox = { (float)screenWidth/2, (float)screenHeight/2, 50.0, 50.0};
 
     struct Enemy enemy[10];
-    enemy[0].type = 1;
+    enemy[0].type = 2;
     enemy[0].hp = 200;
     enemy[0].attack = 1;
     enemy[0].speed = 4;

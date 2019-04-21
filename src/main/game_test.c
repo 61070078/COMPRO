@@ -123,7 +123,7 @@ int main()
     struct Character player = {100, 10, 7, 50, 1, 0, 0, 0, false};
 
     struct Enemy enemy[10];
-    enemy[0].type = randoms(0, 4);
+    enemy[0].type = 1;
     enemy[0].hp = 200;
     enemy[0].attack = 1;
     enemy[0].speed = 4;
@@ -243,7 +243,7 @@ int main()
                     break;
             }
 
-            if (enemy[0].hitWall && framesCounter%7 == 0 && enemy[0].state > -1) player.hp -= enemy[0].attack;
+            if (enemy[0].hitPlayer && framesCounter%7 == 0 && enemy[0].state > -1) player.hp -= enemy[0].attack;
 
             if(player.hp <= 0) {
                 player.hp = 0;
