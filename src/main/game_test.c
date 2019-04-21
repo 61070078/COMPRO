@@ -21,15 +21,17 @@ int main()
     int enemyFrames = 0;
     int valueEnemy = 0;
     int gameState = 0;
+    int theMap = 0;
     //----------------------------------------------------------------------------------
 
     // Set Window----------------------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "Game Beta");
-    SetTargetFPS(60);  
+    InitAudioDevice(); 
+    SetTargetFPS(60); 
     //----------------------------------------------------------------------------------
 
 
-    // Loading PNG----------------------------------------------------------------------
+    // Loading Texture And Audio--------------------------------------------------------
     Texture2D playerTexture[playerTextureValue];
     playerTexture[0] = LoadTexture("../IMG/Player/walk_R.png");
     playerTexture[1] = LoadTexture("../IMG/Player/walk_L.png");
@@ -63,15 +65,21 @@ int main()
     enemyTexture[19] = LoadTexture("../IMG/Enemy/EM_5/EM/walk_B.png");
     
     Texture2D mapTexture[mapTextureValue];
-    mapTexture[0] = LoadTexture("../IMG/Maps/map_1.png");
-    mapTexture[1] = LoadTexture("../IMG/Maps/map_2.png");
-    mapTexture[2] = LoadTexture("../IMG/Maps/map_3.png");
-    mapTexture[3] = LoadTexture("../IMG/Maps/map_4.png");
-    mapTexture[4] = LoadTexture("../IMG/Maps/map_s.png");
+    mapTexture[0] = LoadTexture("../IMG/Maps/Map_1.png");
+    mapTexture[1] = LoadTexture("../IMG/Maps/Map_2.png");
+    mapTexture[2] = LoadTexture("../IMG/Maps/Map_3.png");
+    mapTexture[3] = LoadTexture("../IMG/Maps/Map_4.png");
+    mapTexture[4] = LoadTexture("../IMG/Maps/Map_5.png");
 
     Texture2D titleTexture[2];
     titleTexture[0] = LoadTexture("../IMG/Title/manu.png");
     titleTexture[1] = LoadTexture("../IMG/Title/gameOver.png");
+
+    Music music[4];
+    music[0] = LoadMusicStream("../Audio/Manu/Theme1.ogg");
+    music[1] = LoadMusicStream("../Audio/Battle/Battle.ogg");
+    music[2] = LoadMusicStream("../Audio/Attack/Attack.ogg");
+    music[3] = LoadMusicStream("../Audio/GameOver/Gameover.ogg");
     //----------------------------------------------------------------------------------
 
     // Struct --------------------------------------------------------------------------
@@ -128,18 +136,35 @@ int main()
     // Color enemyColor = WHITE;
     //----------------------------------------------------------------------------------
 
+    PlayMusicStream(music[0]);
+    PlayMusicStream(music[1]);
+    PlayMusicStream(music[2]);
+    PlayMusicStream(music[3]);
+
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
+        UpdateMusicStream(music[0]);
+        UpdateMusicStream(music[1]);
+        UpdateMusicStream(music[2]);
+        UpdateMusicStream(music[3]);
+
         switch (gameState)
         {
         case 0:
+            PlayMusicStream(music[0]);
+            StopMusicStream(music[1]);
+            StopMusicStream(music[2]);
+            StopMusicStream(music[3]);
             if (IsKeyDown(KEY_G)) {
                 gameState = 1;
                 player.hp = 100;
+                theMap = randoms(0, 4);
             }
             break;
         case 1:
+            StopMusicStream(music[0]);
+            PlayMusicStream(music[1]);
             player.action = 0;
             player.state = 0;
             framesCounter++;
@@ -158,8 +183,9 @@ int main()
 
             // Update-----------------------------------------------------------------------
             enemy[0].hitWall = CheckCollisionRecs(playerBox, enemyBox);
+
             if(!enemy[0].hitWall){
-                if(abs(enemyBox.x - playerBox.x) < enemy[0].speed) enemyBox.x = playerBox.x;
+                if(abs(enemyBox.x - playerBox.x) < enemy[0].speed) enemyBox.x = playerBox.x;  
                 else if(enemyBox.x < playerBox.x) enemyBox.x += enemy[0].speed;
                 else if(enemyBox.x > playerBox.x) enemyBox.x -= enemy[0].speed;
             
@@ -243,8 +269,12 @@ int main()
             }
             break;
         case 2:
-            delay(2);
-            gameState = 0;
+            StopMusicStream(music[1]);
+            PlayMusicStream(music[3]);
+            // delay(5);
+            if ((int)(GetMusicTimePlayed(music[3])/GetMusicTimeLength(music[3])*100) == 99) {
+                gameState = 0;
+            }
             break;
         }
 
@@ -261,7 +291,7 @@ int main()
                 DrawTexture(titleTexture[0], 0, 0, WHITE);
                 break;
             case 1:
-                DrawTexture(mapTexture[1], 0, 0, WHITE);
+                DrawTexture(mapTexture[theMap], 0, 0, WHITE);
 
                 switch(player.state){
                     case 1:
@@ -298,6 +328,7 @@ int main()
                 break;
             case 2:
                 DrawTexture(titleTexture[1], 0, 0, WHITE);
+                DrawText(FormatText("%i", (int)(GetMusicTimePlayed(music[3])/GetMusicTimeLength(music[3])*100)), 10, screenHeight - 40, 25, GREEN);
                 break;
             }
             
@@ -308,7 +339,7 @@ int main()
         //----------------------------------------------------------------------------------
     }
 
-    // Texture unloading--------------------------------------------------------------------
+    // Texture And Audio Unloading----------------------------------------------------------
     for(int i = 0; i < playerTextureValue; i++)
     {
         UnloadTexture(playerTexture[i]);
@@ -325,8 +356,13 @@ int main()
     {
         UnloadTexture(titleTexture[i]);
     }
+    for (int i = 0; i < 4; i++)
+    {
+        UnloadMusicStream(music[i]);
+    }
     //--------------------------------------------------------------------------------------
 
+    CloseAudioDevice();
     CloseWindow();
     
     return 0;
@@ -341,8 +377,7 @@ void delay(int number_of_seconds)
     clock_t start_time = clock();
 
     // looping till required time is not acheived
-    while (clock() < start_time + milli_seconds)
-        ;
+    while (clock() < start_time + milli_seconds);
 }
 
 int randoms(int lower, int upper) 
