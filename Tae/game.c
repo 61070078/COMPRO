@@ -13,7 +13,7 @@ int main()
     int enemyTextureValue = 20;
     int soundFxValue = 1;
     int musicValue = 4;
-    int titleTextureValue = 8;
+    int titleTextureValue = 9;
     int itemTextureValue = 10;
 
     int enemyValue = 0;
@@ -93,6 +93,7 @@ int main()
     titleTexture[5] = LoadTexture("../src/IMG/items/text_Q.png");
     titleTexture[6] = LoadTexture("../src/IMG/items/text_W.png");
     titleTexture[7] = LoadTexture("../src/IMG/items/text_E.png");
+    titleTexture[8] = LoadTexture("../src/IMG/items/text_N.png");
 
     Music music[musicValue];
     music[0] = LoadMusicStream("../src/Audio/Manu/Theme1.ogg");
@@ -509,12 +510,13 @@ int main()
                 DrawTexture(itemTexture[randoms(0, 9)], 729, 108, WHITE);
                 DrawTexture(itemTexture[randoms(0, 9)], 1002, 108, WHITE);
 
-                DrawTexture(titleTexture[5], 538, 439, WHITE);
-                DrawTexture(titleTexture[6], 811, 439, WHITE);
-                DrawTexture(titleTexture[7], 1084, 439, WHITE);
+                DrawTexture(titleTexture[5], 456, 442, WHITE);
+                DrawTexture(titleTexture[6], 729, 442, WHITE);
+                DrawTexture(titleTexture[7], 1002, 442, WHITE);
 
-                DrawTexture(titleTexture[3], 593, 561, WHITE);
-                DrawTexture(titleTexture[4], 867, 561, WHITE);
+                DrawTexture(titleTexture[3], 456, 560, WHITE);
+                DrawTexture(titleTexture[4], 729, 560, WHITE);
+                DrawTexture(titleTexture[8], 1002, 560, WHITE);
 
                 DrawText(FormatText("HP :"),   90, 348, 28, GREEN);
                 DrawText(FormatText("SP :"),   90, 380, 28, GREEN);
@@ -535,10 +537,6 @@ int main()
                 DrawText(FormatText("%i", randoms(0, 99)),   298, 572, 28, GREEN);
                 break;
             }
-
-
-
-
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
