@@ -9,16 +9,20 @@ int main()
 {
     // Variable And Config-------------------------------------------------------------------------
     int playerTextureValue = 4;
-    int mapTextureValue = 6;
+    int mapTextureValue = 5;
     int enemyTextureValue = 20;
     int soundFxValue = 1;
     int musicValue = 4;
-    int titleTextureValue = 9;
+    int titleTextureValue = 16;
     int itemTextureValue = 10;
 
     int enemyValue = 0;
     int currentEnemy = 0;
     int killEnemyValue = 0;
+
+    int item1 = 0;
+    int item2 = 0;
+    int item3 = 0;
 
     int screenWidth = 1280;
     int screenHeight = 720;
@@ -28,6 +32,16 @@ int main()
     int framesSpeed = 8;
     int gameState = 0;
     int theMap = 0;
+
+    int lettersCount = 0;
+    int topSideRecWidth = 16;
+    int leftSideRecHeight = 16;
+    int bottomSideRecWidth = 16;
+    int rightSideRecHeight = 16;
+    int state = 0;                  // Tracking animation states (State Machine)
+    float alpha = 1.0f;
+    int logoPositionX = screenWidth/2 - 128;
+    int logoPositionY = screenHeight/2 - 128;
     //----------------------------------------------------------------------------------
 
     // Set Window----------------------------------------------------------------------
@@ -82,7 +96,6 @@ int main()
     mapTexture[2] = LoadTexture("../src/IMG/Maps/Map_3.png");
     mapTexture[3] = LoadTexture("../src/IMG/Maps/Map_4.png");
     mapTexture[4] = LoadTexture("../src/IMG/Maps/Map_5.png");
-    mapTexture[5] = LoadTexture("../src/IMG/Maps/bar.png");
 
     Texture2D titleTexture[titleTextureValue];
     titleTexture[0] = LoadTexture("../src/IMG/Title/manu.png");
@@ -94,6 +107,13 @@ int main()
     titleTexture[6] = LoadTexture("../src/IMG/items/text_W.png");
     titleTexture[7] = LoadTexture("../src/IMG/items/text_E.png");
     titleTexture[8] = LoadTexture("../src/IMG/items/text_N.png");
+    titleTexture[9] = LoadTexture("../src/IMG/Title/Bar/bar_item_1.png");
+    titleTexture[10] = LoadTexture("../src/IMG/Title/Bar/bar_item_2.png");
+    titleTexture[11] = LoadTexture("../src/IMG/Title/Bar/bar_item_3.png");
+    titleTexture[12] = LoadTexture("../src/IMG/Title/Bar/bar_item_4.png");
+    titleTexture[13] = LoadTexture("../src/IMG/Title/Bar/bar_item_5.png");
+    titleTexture[14] = LoadTexture("../src/IMG/Title/Bar/bar_item_6.png");
+    titleTexture[15] = LoadTexture("../src/IMG/Title/Bar/bar.png");
 
     Music music[musicValue];
     music[0] = LoadMusicStream("../src/Audio/Manu/Theme1.ogg");
@@ -145,15 +165,6 @@ int main()
         bool hitPlayer;
         bool hitWall;
     };
-
-    struct Game
-    {
-        int item1;
-        int item2;
-        int item3;   
-    };
-
-    struct Game game = {0, 0, 0};
 
     struct Character player = {100, 100, 10, 7, 50, 50, 1, 0, 0, 0, false};
 
@@ -219,15 +230,61 @@ int main()
         switch (gameState)
         {
         case 0:
-            PlayMusicStream(music[0]);
             StopMusicStream(music[1]);
             StopMusicStream(music[2]);
             StopMusicStream(music[3]);
-            if (IsKeyDown(KEY_G)) {
-                gameState = 1;
-                player.hp = 100;
-                theMap = randoms(0, 4);
-                enemyValue = randoms(0, 9);
+            if (state == 0)                 // State 0: Small box blinking
+            {
+                StopMusicStream(music[0]);
+                framesCounter++;
+                if (framesCounter == 120)
+                {
+                    state = 1;
+                    framesCounter = 0;      // Reset counter... will be used later...
+                }
+            }
+            else if (state == 1)            // State 1: Top and left bars growing
+            {
+                StopMusicStream(music[0]);
+                topSideRecWidth += 4;
+                leftSideRecHeight += 4;
+                if (topSideRecWidth == 256) state = 2;
+            }
+            else if (state == 2)            // State 2: Bottom and right bars growing
+            {
+                StopMusicStream(music[0]);
+                bottomSideRecWidth += 4;
+                rightSideRecHeight += 4;
+                if (bottomSideRecWidth == 256) state = 3;
+            }
+            else if (state == 3)            // State 3: Letters appearing (one by one)
+            {
+                StopMusicStream(music[0]);
+                framesCounter++;
+                if (framesCounter/12)       // Every 12 frames, one more letter!
+                {
+                    lettersCount++;
+                    framesCounter = 0;
+                }
+                if (lettersCount >= 10)     // When all letters have appeared, just fade out everything
+                {
+                    alpha -= 0.02f;
+                    if (alpha <= 0.0f)
+                    {
+                        alpha = 0.0f;
+                        state = 4;
+                    }
+                }
+            }
+            else if (state == 4)            // State 4: Reset and Replay
+            {
+                PlayMusicStream(music[0]);
+                if (IsKeyDown(KEY_G)) {
+                    gameState = 1;
+                    player.hp = 100;
+                    theMap = randoms(0, 4);
+                    enemyValue = randoms(1, 9);
+                }
             }
             break;
         case 1:
@@ -393,9 +450,9 @@ int main()
             {
                 if (killEnemyValue == enemyValue) {
                     gameState = 3;
-                    game.item1 = randoms(0, 9);
-                    game.item2 = randoms(0, 9);
-                    game.item3 = randoms(0, 9);
+                    item1 = randoms(0, 9);
+                    item2 = randoms(0, 9);
+                    item3 = randoms(0, 9);
                 }
                 if (enemy[i].state == -1) {
                     killEnemyValue += 1;
@@ -461,77 +518,80 @@ int main()
             StopMusicStream(music[0]);
             if (IsKeyDown(KEY_N)) {
                 gameState = 1;
+                theMap = randoms(0, 4);
+                enemyValue = randoms(1, 9);
+                currentEnemy = 0;
             }
-            if (IsKeyDown(KEY_Q)) {
-                switch ()
-                {
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                }
-            }
-            if (IsKeyDown(KEY_W)) {
-                case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-            }
-            if (IsKeyDown(KEY_E)) {
-                case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-                    case 1:
-                        break;
-            }
-            break;
+            // if (IsKeyDown(KEY_Q)) {
+            //     switch ()
+            //     {
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //     }
+            // }
+            // if (IsKeyDown(KEY_W)) {
+            //     case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            // }
+            // if (IsKeyDown(KEY_E)) {
+            //     case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            // }
+            // break;
         }
 
         //----------------------------------------------------------------------------------
@@ -544,7 +604,40 @@ int main()
             switch (gameState)
             {
             case 0:
-                DrawTexture(titleTexture[0], 0, 0, WHITE);
+                ClearBackground(RAYWHITE);
+                if (state == 0)
+                {
+                    if ((framesCounter/15)%2) DrawRectangle(logoPositionX, logoPositionY, 16, 16, BLACK);
+                }
+                else if (state == 1)
+                {
+                    DrawRectangle(logoPositionX, logoPositionY, topSideRecWidth, 16, BLACK);
+                    DrawRectangle(logoPositionX, logoPositionY, 16, leftSideRecHeight, BLACK);
+                }
+                else if (state == 2)
+                {
+                    DrawRectangle(logoPositionX, logoPositionY, topSideRecWidth, 16, BLACK);
+                    DrawRectangle(logoPositionX, logoPositionY, 16, leftSideRecHeight, BLACK);
+
+                    DrawRectangle(logoPositionX + 240, logoPositionY, 16, rightSideRecHeight, BLACK);
+                    DrawRectangle(logoPositionX, logoPositionY + 240, bottomSideRecWidth, 16, BLACK);
+                }
+                else if (state == 3)
+                {
+                    DrawRectangle(logoPositionX, logoPositionY, topSideRecWidth, 16, Fade(BLACK, alpha));
+                    DrawRectangle(logoPositionX, logoPositionY + 16, 16, leftSideRecHeight - 32, Fade(BLACK, alpha));
+
+                    DrawRectangle(logoPositionX + 240, logoPositionY + 16, 16, rightSideRecHeight - 32, Fade(BLACK, alpha));
+                    DrawRectangle(logoPositionX, logoPositionY + 240, bottomSideRecWidth, 16, Fade(BLACK, alpha));
+
+                    DrawRectangle(screenWidth/2 - 112, screenHeight/2 - 112, 224, 224, Fade(RAYWHITE, alpha));
+
+                    DrawText(SubText("raylib", 0, lettersCount), screenWidth/2 - 44, screenHeight/2 + 48, 50, Fade(BLACK, alpha));
+                }
+                else if (state == 4)
+                {
+                    DrawTexture(titleTexture[0], 0, 0, WHITE);
+                }
                 break;
             case 1:
                 DrawTexture(mapTexture[theMap], 0, 0, WHITE);
@@ -578,9 +671,21 @@ int main()
                 DrawText(FormatText("%i", currentEnemy), 0, 60, 50, GREEN);
                 DrawText(FormatText("%i", killEnemyValue), 0, 120, 50, GREEN);
 
-                DrawTexture(mapTexture[5], 0, 80, WHITE);
+                DrawTexture(titleTexture[15], 0, 80, WHITE);
                 DrawRectangleRec(playerHp, GREEN);
                 DrawRectangleRec(playerStamina, BLUE);
+                DrawTexture(titleTexture[9], 265, 661, WHITE);
+                DrawTexture(titleTexture[10], 428, 661, WHITE);
+                DrawTexture(titleTexture[11], 591, 661, WHITE);
+                DrawTexture(titleTexture[12], 754, 661, WHITE);
+                DrawTexture(titleTexture[13], 917, 661, WHITE);
+                DrawTexture(titleTexture[14], 1080, 661, WHITE);
+                DrawText(FormatText("X %i", randoms(1, 99)), 337, 674, 28, GREEN);
+                DrawText(FormatText("X %i", randoms(1, 99)), 500, 674, 28, GREEN);
+                DrawText(FormatText("X %i", randoms(1, 99)), 663, 674, 28, GREEN);
+                DrawText(FormatText("X %i", randoms(1, 99)), 826, 674, 28, GREEN);
+                DrawText(FormatText("X %i", randoms(1, 99)), 989, 674, 28, GREEN);
+                DrawText(FormatText("X %i", randoms(1, 99)), 1152, 674, 28, GREEN);
                 break;
             case 2:
                 DrawTexture(titleTexture[1], 0, 0, WHITE);
@@ -590,9 +695,9 @@ int main()
                 DrawTexture(mapTexture[theMap], 0, 0, WHITE);
                 DrawTexture(titleTexture[2], 54, 108, WHITE);
 
-                DrawTexture(itemTexture[randoms(0, 9)], 456, 108, WHITE);
-                DrawTexture(itemTexture[randoms(0, 9)], 729, 108, WHITE);
-                DrawTexture(itemTexture[randoms(0, 9)], 1002, 108, WHITE);
+                DrawTexture(itemTexture[item1], 456, 108, WHITE);
+                DrawTexture(itemTexture[item2], 729, 108, WHITE);
+                DrawTexture(itemTexture[item3], 1002, 108, WHITE);
 
                 DrawTexture(titleTexture[5], 456, 442, WHITE);
                 DrawTexture(titleTexture[6], 729, 442, WHITE);
