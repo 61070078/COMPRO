@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include "stdlib.h"
 #include "time.h"
-#include "stdio.h" 
+#include "stdio.h"
 
 int randoms(int lower, int upper);
 
@@ -9,17 +9,21 @@ int main()
 {
     // Variable And Config-------------------------------------------------------------------------
     int playerTextureValue = 4;
-    int mapTextureValue = 6;
+    int mapTextureValue = 5;
     int enemyTextureValue = 20;
     int soundFxValue = 1;
     int musicValue = 4;
-    int titleTextureValue = 9;
+    int titleTextureValue = 16;
     int itemTextureValue = 10;
 
     int enemyValue = 0;
     int currentEnemy = 0;
     int killEnemyValue = 0;
     int enemyRemaining = 0;
+
+    int item1 = 0;
+    int item2 = 0;
+    int item3 = 0;
 
     int screenWidth = 1280;
     int screenHeight = 720;
@@ -33,8 +37,8 @@ int main()
 
     // Set Window----------------------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "Lost Fantasy");
-    InitAudioDevice(); 
-    SetTargetFPS(60); 
+    InitAudioDevice();
+    SetTargetFPS(60);
     //----------------------------------------------------------------------------------
 
 
@@ -76,14 +80,13 @@ int main()
     enemyTexture[17] = LoadTexture("../IMG/Enemy/EM_5/EM/walk_L.png");
     enemyTexture[18] = LoadTexture("../IMG/Enemy/EM_5/EM/walk_F.png");
     enemyTexture[19] = LoadTexture("../IMG/Enemy/EM_5/EM/walk_B.png");
-    
+
     Texture2D mapTexture[mapTextureValue];
     mapTexture[0] = LoadTexture("../IMG/Maps/Map_1.png");
     mapTexture[1] = LoadTexture("../IMG/Maps/Map_2.png");
     mapTexture[2] = LoadTexture("../IMG/Maps/Map_3.png");
     mapTexture[3] = LoadTexture("../IMG/Maps/Map_4.png");
     mapTexture[4] = LoadTexture("../IMG/Maps/Map_5.png");
-    mapTexture[5] = LoadTexture("../IMG/Title/bar.png");
 
     Texture2D titleTexture[titleTextureValue];
     titleTexture[0] = LoadTexture("../IMG/Title/manu.png");
@@ -95,6 +98,13 @@ int main()
     titleTexture[6] = LoadTexture("../IMG/items/text_W.png");
     titleTexture[7] = LoadTexture("../IMG/items/text_E.png");
     titleTexture[8] = LoadTexture("../IMG/items/text_N.png");
+    titleTexture[9] = LoadTexture("../IMG/Title/Bar/bar_item_1.png");
+    titleTexture[10] = LoadTexture("../IMG/Title/Bar/bar_item_2.png");
+    titleTexture[11] = LoadTexture("../IMG/Title/Bar/bar_item_3.png");
+    titleTexture[12] = LoadTexture("../IMG/Title/Bar/bar_item_4.png");
+    titleTexture[13] = LoadTexture("../IMG/Title/Bar/bar_item_5.png");
+    titleTexture[14] = LoadTexture("../IMG/Title/Bar/bar_item_6.png");
+    titleTexture[15] = LoadTexture("../IMG/Title/Bar/bar.png");
 
     Music music[musicValue];
     music[0] = LoadMusicStream("../Audio/Manu/Theme1.ogg");
@@ -131,6 +141,7 @@ int main()
         int state;
         int action;
         bool hitWall;
+        int defend;
     };
 
     struct Enemy {
@@ -147,7 +158,19 @@ int main()
         bool hitWall;
     };
 
-    struct Character player = {100, 100, 10, 7, 50, 50, 1, 0, 0, 0, false};
+    struct Inventory
+    {
+        int potion;
+        int stamina;
+        int immortality;
+        int speed;
+        int armor;
+        int revive;
+    };
+
+    struct Inventory item = {3, 3, 0, 0, 0, 0};
+
+    struct Character player = {100, 100, 10, 7, 50, 50, 1, 0, 0, 0, false, 0};
 
     struct Enemy monster[5];
 
@@ -223,7 +246,7 @@ int main()
     // enemy[0].action = 0;
     // enemy[0].hitPlayer = false;
     // enemy[0].hitWall = false;
-    
+
     //----------------------------------------------------------------------------------
 
     // Rectangle------------------------------------------------------------------------
@@ -303,7 +326,7 @@ int main()
                 gameState = 1;
                 player.hp = 100;
                 theMap = 0;
-                enemyValue = 0;
+                enemyValue = 1;
             }
             break;
         case 1:
@@ -333,9 +356,9 @@ int main()
                 enemyFrame[currentEnemy].x = 0;
                 enemyFrame[currentEnemy].y = 0;
                 enemyFrame[currentEnemy].width = 50;
-                enemyFrame[currentEnemy].height = 50; 
-                currentEnemy ++;        
-            }   
+                enemyFrame[currentEnemy].height = 50;
+                currentEnemy ++;
+            }
 
             // Update
             //----------------------------------------------------------------------------------
@@ -362,7 +385,7 @@ int main()
                             enemy[i].texture = 3;
                             enemyBox[i].y -= enemy[i].speed;
                         }
-                        if(distanceY < enemy[i].speed) enemyBox[i].y = playerBox.y;   
+                        if(distanceY < enemy[i].speed) enemyBox[i].y = playerBox.y;
                     }
                 }
 
@@ -444,7 +467,7 @@ int main()
                         playerBox.x = 50;
 
                     playerAttackBox.x = playerBox.x - 25;
-                    playerAttackBox.y = playerBox.y;    
+                    playerAttackBox.y = playerBox.y;
                 }
                 if (IsKeyDown(KEY_UP)) {
                     playerBox.y -= player.speed;
@@ -480,7 +503,7 @@ int main()
                         playerBox.y = screenHeight - 100;
 
                     playerAttackBox.x = playerBox.x;
-                    playerAttackBox.y = playerBox.y + 25;      
+                    playerAttackBox.y = playerBox.y + 25;
                 }
 
                 if (IsKeyPressed(KEY_SPACE) && player.stamina >= 5) {
@@ -494,18 +517,35 @@ int main()
                                 enemy[i].hp = 0;
                                 enemy[i].state = -1;
                             }
-                        }        
-                    }  
+                        }
+                    }
                 }
+                if (IsKeyPressed(KEY_A)) {
+                    player.hp += 30;
+                    item.potion -= 1;
+                }
+                if (IsKeyPressed(KEY_S)) {
+                    player.stamina += 20;
+                    item.stamina -= 1;
+                }
+                // if (IsKeyPressed(KEY_3)) {
+
+                // }
+                // if (IsKeyPressed(KEY_4)) {
+
+                // }
+                // if (IsKeyPressed(KEY_5)) {
+
+                // }
             }
 
             for (int i = 0; i < currentEnemy; ++i) //Cheack End of Rounds
             {
                 if (killEnemyValue == enemyValue) {
                     gameState = 3;
-                    // game.item1 = randoms(0, 9);
-                    // game.item2 = randoms(0, 9);
-                    // game.item3 = randoms(0, 9);
+                    item1 = randoms(0, 9);
+                    item2 = randoms(0, 9);
+                    item3 = randoms(0, 9);
                 }
                 if (enemy[i].state == -1) {
                     killEnemyValue += 1;
@@ -521,7 +561,7 @@ int main()
                 if(player.action % 3 == 0) currentAttackFrame ++;
                 else if (player.action > 16){
                     player.action = 0;
-                    currentAttackFrame = 0;                    
+                    currentAttackFrame = 0;
                 }
                 switch(player.texture){
                     case 0:
@@ -553,9 +593,9 @@ int main()
                 for(int i = 0; i < currentEnemy; i++){
                     enemy[i].frame ++;
                     if (enemy[i].frame > 2) enemy[i].frame = 0;
-                    enemyFrame[i].x = (float)enemy[i].frame*(float)enemyTexture[enemy[i].texture].width/3;        
-                }   
-                
+                    enemyFrame[i].x = (float)enemy[i].frame*(float)enemyTexture[enemy[i].texture].width/3;
+                }
+
             }
             playerStamina.width = player.stamina * 165/player.maxStamina;
             break;
@@ -571,76 +611,127 @@ int main()
             StopMusicStream(music[0]);
             if (IsKeyDown(KEY_N)) {
                 gameState = 1;
+                theMap = randoms(0, 4);
+                enemyValue = randoms(1, 9);
+                currentEnemy = 0;
             }
-            // if (IsKeyDown(KEY_Q)) {
-            //     switch ()
-            //     {
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //     }
-            // }
-            // if (IsKeyDown(KEY_W)) {
-            //     case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            // }
-            // if (IsKeyDown(KEY_E)) {
-            //     case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            //         case 1:
-            //             break;
-            // }
+            if (IsKeyDown(KEY_Q)) {
+                switch (item1)
+                {
+                    case 6:
+                        item.potion += 1;
+                        break;
+                    case 9:
+                        item.stamina += 1;
+                        break;
+                    case 3:
+                        item.immortality += 1;
+                        break;
+                    case 8:
+                        item.speed += 1;
+                        break;
+                    case 2:
+                        item.armor += 1;
+                        break;
+                    case 7:
+                        item.revive += 1;
+                        break;
+                    case 0:
+                        player.attack += 10;
+                        break;
+                    case 1:
+                        player.defend += 10;
+                        break;
+                    case 4:
+                        player.maxHp += 20;
+                        break;
+                    case 5:
+                        player.maxStamina += 10;
+                        break;
+                }
+                gameState = 1;
+                theMap = randoms(0, 4);
+                enemyValue = randoms(1, 9);
+                currentEnemy = 0;
+            }
+            if (IsKeyDown(KEY_W)) {
+                switch (item2)
+                {
+                    case 6:
+                        item.potion += 1;
+                        break;
+                    case 9:
+                        item.stamina += 1;
+                        break;
+                    case 3:
+                        item.immortality += 1;
+                        break;
+                    case 8:
+                        item.speed += 1;
+                        break;
+                    case 2:
+                        item.armor += 1;
+                        break;
+                    case 7:
+                        item.revive += 1;
+                        break;
+                    case 0:
+                        player.attack += 10;
+                        break;
+                    case 1:
+                        player.defend += 10;
+                        break;
+                    case 4:
+                        player.maxHp += 20;
+                        break;
+                    case 5:
+                        player.maxStamina += 10;
+                        break;
+                }
+                gameState = 1;
+                theMap = randoms(0, 4);
+                enemyValue = randoms(1, 9);
+                currentEnemy = 0;
+            }
+            if (IsKeyDown(KEY_E)) {
+                switch (item3)
+                {
+                    case 6:
+                        item.potion += 1;
+                        break;
+                    case 9:
+                        item.stamina += 1;
+                        break;
+                    case 3:
+                        item.immortality += 1;
+                        break;
+                    case 8:
+                        item.speed += 1;
+                        break;
+                    case 2:
+                        item.armor += 1;
+                        break;
+                    case 7:
+                        item.revive += 1;
+                        break;
+                    case 0:
+                        player.attack += 10;
+                        break;
+                    case 1:
+                        player.defend += 10;
+                        break;
+                    case 4:
+                        player.maxHp += 20;
+                        break;
+                    case 5:
+                        player.maxStamina += 10;
+                        break;
+                }
+                gameState = 1;
+                theMap = randoms(0, 4);
+                enemyValue = randoms(1, 9);
+                currentEnemy = 0;
+            }
             break;
         }
 
@@ -648,9 +739,7 @@ int main()
 
         // Draw------------------------------------------------------------------------------
         BeginDrawing();
-
             ClearBackground(RAYWHITE);
-
             switch (gameState)
             {
             case 0:
@@ -658,7 +747,6 @@ int main()
                 break;
             case 1:
                 DrawTexture(mapTexture[theMap], 0, 0, WHITE);
-
                 switch(player.state){
                     case 1:
                         DrawTexturePro(playerTexture[player.texture], playerFrame, playerBox, origin, 0.0, WHITE);
@@ -666,7 +754,6 @@ int main()
                     default:
                         DrawTexturePro(playerTexture[player.texture], playerFrameStop, playerBox, origin, 0.0, WHITE);
                 }
-
                 for(int i = 0; i < currentEnemy; i++){
                     switch(enemy[i].state){
                     case 1:
@@ -675,9 +762,8 @@ int main()
                         break;
                     default:
                         break;
-                    }    
+                    }
                 }
-         
                 switch(player.action){
                     case 0:
                         break;
@@ -686,10 +772,22 @@ int main()
                 }
                 DrawText(FormatText("%i", player.hitWall), 0, 0, 50, GREEN);
                 DrawText(FormatText("%f", playerBox.x), 0, 60, 50, GREEN);
-                
-                DrawTexture(mapTexture[5], 0, 80, WHITE);
+
+                DrawTexture(titleTexture[15], 0, 80, WHITE);
                 DrawRectangleRec(playerHp, GREEN);
                 DrawRectangleRec(playerStamina, BLUE);
+                DrawTexture(titleTexture[9], 265, 661, WHITE);
+                DrawTexture(titleTexture[10], 428, 661, WHITE);
+                DrawTexture(titleTexture[11], 591, 661, WHITE);
+                DrawTexture(titleTexture[12], 754, 661, WHITE);
+                DrawTexture(titleTexture[13], 917, 661, WHITE);
+                DrawTexture(titleTexture[14], 1080, 661, WHITE);
+                DrawText(FormatText("x %i", item.potion), 337, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item.stamina), 500, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item.immortality), 663, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item.speed), 826, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item.armor), 989, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item.revive), 1152, 674, 28, GREEN);
                 break;
             case 2:
                 DrawTexture(titleTexture[1], 0, 0, WHITE);
@@ -699,9 +797,9 @@ int main()
                 DrawTexture(mapTexture[theMap], 0, 0, WHITE);
                 DrawTexture(titleTexture[2], 54, 108, WHITE);
 
-                DrawTexture(itemTexture[randoms(0, 9)], 456, 108, WHITE);
-                DrawTexture(itemTexture[randoms(0, 9)], 729, 108, WHITE);
-                DrawTexture(itemTexture[randoms(0, 9)], 1002, 108, WHITE);
+                DrawTexture(itemTexture[item1], 456, 108, WHITE);
+                DrawTexture(itemTexture[item2], 729, 108, WHITE);
+                DrawTexture(itemTexture[item3], 1002, 108, WHITE);
 
                 DrawTexture(titleTexture[5], 456, 442, WHITE);
                 DrawTexture(titleTexture[6], 729, 442, WHITE);
@@ -713,27 +811,23 @@ int main()
 
                 DrawText(FormatText("HP :"),   90, 348, 28, GREEN);
                 DrawText(FormatText("SP :"),   90, 380, 28, GREEN);
-                DrawText(FormatText("Potion"),   90, 412, 28, GREEN);
-                DrawText(FormatText("Staminai"),   90, 444, 28, GREEN);
-                DrawText(FormatText("Movement"),   90, 476, 28, GREEN);
-                DrawText(FormatText("Immortality"),   90, 508, 28, GREEN);
-                DrawText(FormatText("Grant Revive"),   90, 540, 28, GREEN);
-                DrawText(FormatText("Extra Health"),   90, 572, 28, GREEN);
+                DrawText(FormatText("Attack"),   90, 412, 28, GREEN);
+                DrawText(FormatText("Defend"),   90, 444, 28, GREEN);
+                DrawText(FormatText("Max Hp"),   90, 476, 28, GREEN);
+                DrawText(FormatText("Max Stamina"),   90, 508, 28, GREEN);
+                DrawText(FormatText("Speed"),   90, 540, 28, GREEN);
+                DrawText(FormatText("Stamina Recove"),   90, 572, 28, GREEN);
 
-                DrawText(FormatText("%i", randoms(0, 99)),   298, 348, 28, GREEN);
-                DrawText(FormatText("%i", randoms(0, 99)),   298, 380, 28, GREEN);
-                DrawText(FormatText("%i", randoms(0, 99)),   298, 412, 28, GREEN);
-                DrawText(FormatText("%i", randoms(0, 99)),   298, 444, 28, GREEN);
-                DrawText(FormatText("%i", randoms(0, 99)),   298, 476, 28, GREEN);
-                DrawText(FormatText("%i", randoms(0, 99)),   298, 508, 28, GREEN);
-                DrawText(FormatText("%i", randoms(0, 99)),   298, 540, 28, GREEN);
-                DrawText(FormatText("%i", randoms(0, 99)),   298, 572, 28, GREEN);
+                DrawText(FormatText("%i", player.hp),   298, 348, 28, GREEN);
+                DrawText(FormatText("%i", player.stamina),   298, 380, 28, GREEN);
+                DrawText(FormatText("%i", player.attack),   298, 412, 28, GREEN);
+                DrawText(FormatText("%i", player.defend),   298, 444, 28, GREEN);
+                DrawText(FormatText("%i", player.maxHp),   298, 476, 28, GREEN);
+                DrawText(FormatText("%i", player.maxStamina),   298, 508, 28, GREEN);
+                DrawText(FormatText("%i", player.speed),   298, 540, 28, GREEN);
+                DrawText(FormatText("%i", player.staminaRecove),   298, 572, 28, GREEN);
                 break;
             }
-            
-            
-
-
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
@@ -771,7 +865,7 @@ int main()
 
     CloseAudioDevice();
     CloseWindow();
-    
+
     return 0;
 }
 
@@ -787,8 +881,8 @@ void delay(int number_of_seconds)
     while (clock() < start_time + milli_seconds);
 }
 
-int randoms(int lower, int upper) 
-{ 
-	int num = (rand() % (upper - lower + 1)) + lower; 
+int randoms(int lower, int upper)
+{
+	int num = (rand() % (upper - lower + 1)) + lower;
     return num;
-} 
+}

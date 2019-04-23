@@ -139,17 +139,18 @@ int main()
 
     // Struct --------------------------------------------------------------------------
     struct Character {
-        int maxHp;
+        int maxHp; //4
         int hp;
-        int attack;
+        int attack; //0
         float speed;
-        int maxStamina;
+        int maxStamina; //5
         int stamina;
         int staminaRecove;
         int texture;
         int state;
         int action;
         bool hitWall;
+        int defend; //1
     };
 
     struct Enemy {
@@ -165,6 +166,16 @@ int main()
         bool hitPlayer;
         bool hitWall;
     };
+
+    // struct Inventory
+    // {
+    //     int potion; 6
+    //     int stamina; 9
+    //     int immortality; 3
+    //     int speed; 8
+    //     int armor; 2
+    //     int revive; 7
+    // };
 
     struct Character player = {100, 100, 10, 7, 50, 50, 1, 0, 0, 0, false};
 
