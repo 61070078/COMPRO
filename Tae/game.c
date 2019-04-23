@@ -146,6 +146,15 @@ int main()
         bool hitWall;
     };
 
+    struct Game
+    {
+        int item1;
+        int item2;
+        int item3;   
+    };
+
+    struct Game game = {0, 0, 0};
+
     struct Character player = {100, 100, 10, 7, 50, 50, 1, 0, 0, 0, false};
 
     struct Enemy enemy[10];
@@ -215,7 +224,7 @@ int main()
             StopMusicStream(music[2]);
             StopMusicStream(music[3]);
             if (IsKeyDown(KEY_G)) {
-                gameState = 3;
+                gameState = 1;
                 player.hp = 100;
                 theMap = randoms(0, 4);
                 enemyValue = randoms(0, 9);
@@ -383,7 +392,10 @@ int main()
             for (int i = 0; i < currentEnemy; ++i)
             {
                 if (killEnemyValue == enemyValue) {
-                    gameState = 2;
+                    gameState = 3;
+                    game.item1 = randoms(0, 9);
+                    game.item2 = randoms(0, 9);
+                    game.item3 = randoms(0, 9);
                 }
                 if (enemy[i].state == -1) {
                     killEnemyValue += 1;
@@ -447,6 +459,78 @@ int main()
             break;
         case 3:
             StopMusicStream(music[0]);
+            if (IsKeyDown(KEY_N)) {
+                gameState = 1;
+            }
+            if (IsKeyDown(KEY_Q)) {
+                switch ()
+                {
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                }
+            }
+            if (IsKeyDown(KEY_W)) {
+                case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+            }
+            if (IsKeyDown(KEY_E)) {
+                case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+                    case 1:
+                        break;
+            }
             break;
         }
 
@@ -537,6 +621,10 @@ int main()
                 DrawText(FormatText("%i", randoms(0, 99)),   298, 572, 28, GREEN);
                 break;
             }
+
+
+
+
         EndDrawing();
         //----------------------------------------------------------------------------------
     }

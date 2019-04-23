@@ -13,7 +13,9 @@ int main()
     int enemyTextureValue = 20;
     int soundFxValue = 1;
     int musicValue = 4;
-    int titleTextureValue = 2   ;
+    int titleTextureValue = 2;
+    int itemTextureValue = 10;
+
     int enemyValue = 0;
     int currentEnemy = 0;
 
@@ -93,6 +95,18 @@ int main()
 
     Sound soundFx[soundFxValue];
     soundFx[0] = LoadSound("../Audio/Attack/Attack.ogg");
+
+    Texture2D itemTexture[itemTextureValue];
+    itemTexture[0] = LoadTexture("../IMG/items/atkUp_T.png");
+    itemTexture[1] = LoadTexture("../IMG/items/defUp_T.png");
+    itemTexture[2] = LoadTexture("../IMG/items/extraArmor_T.png");
+    itemTexture[3] = LoadTexture("../IMG/items/immortal_T.png");
+    itemTexture[4] = LoadTexture("../IMG/items/maxPotion_T.png");
+    itemTexture[5] = LoadTexture("../IMG/items/maxStamina_T.png");
+    itemTexture[6] = LoadTexture("../IMG/items/potion_T.png");
+    itemTexture[7] = LoadTexture("../IMG/items/revive_T.png");
+    itemTexture[8] = LoadTexture("../IMG/items/speedUp_T.png");
+    itemTexture[9] = LoadTexture("../IMG/items/stamina_T.png");
     //----------------------------------------------------------------------------------
 
     // Struct --------------------------------------------------------------------------
@@ -496,7 +510,10 @@ int main()
     {
         UnloadSound(soundFx[i]);
     }
-    
+    for (int i = 0; i < itemTextureValue; ++i)
+    {
+        UnloadTexture(itemTexture[i]);
+    }
     //--------------------------------------------------------------------------------------
 
     CloseAudioDevice();
