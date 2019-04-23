@@ -19,6 +19,7 @@ int main()
     int enemyValue = 0;
     int currentEnemy = 0;
     int killEnemyValue = 0;
+    int enemyRemaining = 0;
 
     int screenWidth = 1280;
     int screenHeight = 720;
@@ -82,7 +83,7 @@ int main()
     mapTexture[2] = LoadTexture("../IMG/Maps/Map_3.png");
     mapTexture[3] = LoadTexture("../IMG/Maps/Map_4.png");
     mapTexture[4] = LoadTexture("../IMG/Maps/Map_5.png");
-    mapTexture[5] = LoadTexture("../IMG/Maps/bar.png");
+    mapTexture[5] = LoadTexture("../IMG/Title/bar.png");
 
     Texture2D titleTexture[titleTextureValue];
     titleTexture[0] = LoadTexture("../IMG/Title/manu.png");
@@ -148,7 +149,69 @@ int main()
 
     struct Character player = {100, 100, 10, 7, 50, 50, 1, 0, 0, 0, false};
 
-    struct Enemy enemy[10];
+    struct Enemy monster[5];
+
+    monster[0].type = 0;
+    monster[0].hp = 50;
+    monster[0].attack = 0;
+    monster[0].speed = 7;
+    monster[0].atkDelay = 0;
+    monster[0].texture = 0;
+    monster[0].frame = 0;
+    monster[0].state = 1;
+    monster[0].action = 0;
+    monster[0].hitPlayer = false;
+    monster[0].hitWall = false;
+
+    monster[1].type = 1;
+    monster[1].hp = 80;
+    monster[1].attack = 1;
+    monster[1].speed = 4;
+    monster[1].atkDelay = 18;
+    monster[1].texture = 0;
+    monster[1].frame = 0;
+    monster[1].state = 1;
+    monster[1].action = 0;
+    monster[1].hitPlayer = false;
+    monster[1].hitWall = false;
+
+    monster[2].type = 2;
+    monster[2].hp = 30;
+    monster[2].attack = 3;
+    monster[2].speed = 5;
+    monster[2].atkDelay = 24;
+    monster[2].texture = 0;
+    monster[2].frame = 0;
+    monster[2].state = 1;
+    monster[2].action = 0;
+    monster[2].hitPlayer = false;
+    monster[2].hitWall = false;
+
+    monster[3].type = 3;
+    monster[3].hp = 30;
+    monster[3].attack = 1;
+    monster[3].speed = 3;
+    monster[3].atkDelay = 0;
+    monster[3].texture = 0;
+    monster[3].frame = 0;
+    monster[3].state = 1;
+    monster[3].action = 0;
+    monster[3].hitPlayer = false;
+    monster[3].hitWall = false;
+
+    monster[4].type = 4;
+    monster[4].hp = 40;
+    monster[4].attack = 2;
+    monster[4].speed = 6;
+    monster[4].atkDelay = 20;
+    monster[4].texture = 0;
+    monster[4].frame = 0;
+    monster[4].state = 1;
+    monster[4].action = 0;
+    monster[4].hitPlayer = false;
+    monster[4].hitWall = false;
+
+    struct Enemy enemy[20];
     // enemy[0].type = 2;
     // enemy[0].hp = 200;
     // enemy[0].attack = 2;
@@ -172,13 +235,35 @@ int main()
     Rectangle playerStamina =  {45, 644, 165.0, 20};
     Rectangle playerHp =  {45, 686, 165.0, 20};
 
-    Rectangle enemyBox[10];
+    Rectangle mapBox[4];
+    mapBox[0].x = 69;
+    mapBox[0].y = 357;
+    mapBox[0].width = 153;
+    mapBox[0].height = 154;
+
+    mapBox[1].x = 222;
+    mapBox[1].y = 511;
+    mapBox[1].width = 164;
+    mapBox[1].height = 142;
+
+    mapBox[2].x = 893;
+    mapBox[2].y = 60;
+    mapBox[2].width = 165;
+    mapBox[2].height = 152;
+
+    mapBox[3].x = 1058;
+    mapBox[3].y = 212;
+    mapBox[3].width = 150;
+    mapBox[3].height = 158;
+
+
+    Rectangle enemyBox[20];
     // enemyBox[0].x = 150;
     // enemyBox[0].y = 150;
     // enemyBox[0].width = 50;
     // enemyBox[0].height = 50;
 
-    Rectangle enemyFrame[10];
+    Rectangle enemyFrame[20];
     // enemyFrame[0].x = 0;
     // enemyFrame[0].y = 0;
     // enemyFrame[0].width = 50;
@@ -217,8 +302,8 @@ int main()
             if (IsKeyDown(KEY_G)) {
                 gameState = 1;
                 player.hp = 100;
-                theMap = randoms(0, 4);
-                enemyValue = 9;
+                theMap = 0;
+                enemyValue = 0;
             }
             break;
         case 1:
@@ -228,15 +313,15 @@ int main()
             framesCounter++;
 
             if(currentEnemy < enemyValue && framesCounter%7 == 0){
-                enemy[currentEnemy].type = randoms(1, 5);
-                enemy[currentEnemy].hp = 50;
-                enemy[currentEnemy].attack = 1;
-                enemy[currentEnemy].speed = 4;
-                enemy[currentEnemy].atkDelay = 0.5;
-                enemy[currentEnemy].texture = 0;
-                enemy[currentEnemy].frame = 0;
-                enemy[currentEnemy].state = 1;
-                enemy[currentEnemy].action = 0;
+                enemy[currentEnemy].type = randoms(0, 4);
+                enemy[currentEnemy].hp = monster[enemy[currentEnemy].type].hp;
+                enemy[currentEnemy].attack = monster[enemy[currentEnemy].type].attack;
+                enemy[currentEnemy].speed = monster[enemy[currentEnemy].type].speed;
+                enemy[currentEnemy].atkDelay = monster[enemy[currentEnemy].type].atkDelay;
+                enemy[currentEnemy].texture = monster[enemy[currentEnemy].type].texture;
+                enemy[currentEnemy].frame = monster[enemy[currentEnemy].type].frame;
+                enemy[currentEnemy].state = monster[enemy[currentEnemy].type].state;
+                enemy[currentEnemy].action = monster[enemy[currentEnemy].type].action;
                 enemy[currentEnemy].hitPlayer = false;
                 enemy[currentEnemy].hitWall = false;
 
@@ -282,26 +367,26 @@ int main()
                 }
 
                 switch(enemy[i].type){
-                    case 2:
+                    case 1:
                         if(enemy[i].texture == 0) enemy[i].texture = 4;
                         else if(enemy[i].texture == 1) enemy[i].texture = 5;
                         else if(enemy[i].texture == 2) enemy[i].texture = 6;
                         else if(enemy[i].texture == 3) enemy[i].texture = 7;
                         break;
-                    case 3:
+                    case 2:
                         if(enemy[i].texture == 0) enemy[i].texture = 8;
                         else if(enemy[i].texture == 1) enemy[i].texture = 9;
                         else if(enemy[i].texture == 2) enemy[i].texture = 10;
                         else if(enemy[i].texture == 3) enemy[i].texture = 11;
                         break;
-                    case 4:
+                    case 3:
                         if(enemy[i].texture == 0) enemy[i].texture = 12;
                         else if(enemy[i].texture == 1) enemy[i].texture = 13;
                         else if(enemy[i].texture == 2) enemy[i].texture = 14;
                         else if(enemy[i].texture == 3) enemy[i].texture = 15;
                         break;
                         break;
-                    case 5:
+                    case 4:
                         if(enemy[i].texture == 0) enemy[i].texture = 16;
                         else if(enemy[i].texture == 1) enemy[i].texture = 17;
                         else if(enemy[i].texture == 2) enemy[i].texture = 18;
@@ -322,9 +407,19 @@ int main()
                 player.hp = 0;
                 player.state = -1;
                 gameState = 2;
-            } else { 
+            } else {
+                float playerTempX = playerBox.x;
+                float playerTempY = playerBox.y;
                 if (IsKeyDown(KEY_RIGHT)) {
                     playerBox.x += player.speed;
+                    for(int i = 0; i < 4; i ++){
+                        player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                        if(player.hitWall) break;
+                    }
+                    if(player.hitWall){
+                        playerBox.x = playerTempX;
+                        playerBox.y = playerTempY;
+                    }
                     player.texture = 0;
                     player.state = 1;
                     if(playerBox.x >= screenWidth - 100)
@@ -335,6 +430,14 @@ int main()
                 }
                 if (IsKeyDown(KEY_LEFT)) {
                     playerBox.x -= player.speed;
+                    for(int i = 0; i < 4; i ++){
+                        player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                        if(player.hitWall) break;
+                    }
+                    if(player.hitWall){
+                        playerBox.x = playerTempX;
+                        playerBox.y = playerTempY;
+                    }
                     player.texture = 1;
                     player.state = 1;
                     if(playerBox.x <= 50)
@@ -345,6 +448,14 @@ int main()
                 }
                 if (IsKeyDown(KEY_UP)) {
                     playerBox.y -= player.speed;
+                    for(int i = 0; i < 4; i ++){
+                        player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                        if(player.hitWall) break;
+                    }
+                    if(player.hitWall){
+                        playerBox.x = playerTempX;
+                        playerBox.y = playerTempY;
+                    }
                     player.texture = 3;
                     player.state = 1;
                     if(playerBox.y <= 50)
@@ -355,6 +466,14 @@ int main()
                 }
                 if (IsKeyDown(KEY_DOWN)) {
                     playerBox.y += player.speed;
+                    for(int i = 0; i < 4; i ++){
+                        player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                        if(player.hitWall) break;
+                    }
+                    if(player.hitWall){
+                        playerBox.x = playerTempX;
+                        playerBox.y = playerTempY;
+                    }
                     player.texture = 2;
                     player.state = 1;
                     if(playerBox.y >= screenHeight - 100)
@@ -565,8 +684,8 @@ int main()
                     default:
                         DrawTexturePro(attackTexture[player.texture], playerAttackFrame, playerAttackBox, origin, 0.0, WHITE);
                 }
-                DrawText(FormatText("%i", enemyValue), 0, 0, 50, GREEN);
-                 DrawText(FormatText("%i", currentEnemy), 0, 60, 50, GREEN);
+                DrawText(FormatText("%i", player.hitWall), 0, 0, 50, GREEN);
+                DrawText(FormatText("%f", playerBox.x), 0, 60, 50, GREEN);
                 
                 DrawTexture(mapTexture[5], 0, 80, WHITE);
                 DrawRectangleRec(playerHp, GREEN);
