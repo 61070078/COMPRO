@@ -13,11 +13,12 @@ int main()
     int enemyTextureValue = 20;
     int soundFxValue = 1;
     int musicValue = 4;
-    int titleTextureValue = 2;
+    int titleTextureValue = 9;
     int itemTextureValue = 10;
 
     int enemyValue = 0;
     int currentEnemy = 0;
+    int killEnemyValue = 0;
 
     int screenWidth = 1280;
     int screenHeight = 720;
@@ -86,6 +87,13 @@ int main()
     Texture2D titleTexture[titleTextureValue];
     titleTexture[0] = LoadTexture("../IMG/Title/manu.png");
     titleTexture[1] = LoadTexture("../IMG/Title/gameOver.png");
+    titleTexture[2] = LoadTexture("../IMG/Face/face_T.png");
+    titleTexture[3] = LoadTexture("../IMG/items/text_F.png");
+    titleTexture[4] = LoadTexture("../IMG/items/text_U.png");
+    titleTexture[5] = LoadTexture("../IMG/items/text_Q.png");
+    titleTexture[6] = LoadTexture("../IMG/items/text_W.png");
+    titleTexture[7] = LoadTexture("../IMG/items/text_E.png");
+    titleTexture[8] = LoadTexture("../IMG/items/text_N.png");
 
     Music music[musicValue];
     music[0] = LoadMusicStream("../Audio/Manu/Theme1.ogg");
@@ -372,6 +380,23 @@ int main()
                 }
             }
 
+            for (int i = 0; i < currentEnemy; ++i) //Cheack End of Rounds
+            {
+                if (killEnemyValue == enemyValue) {
+                    gameState = 3;
+                    // game.item1 = randoms(0, 9);
+                    // game.item2 = randoms(0, 9);
+                    // game.item3 = randoms(0, 9);
+                }
+                if (enemy[i].state == -1) {
+                    killEnemyValue += 1;
+                }
+
+            }
+            if (killEnemyValue != enemyValue) {
+                killEnemyValue = 0;
+            } // ------
+
             if(player.action > 0){
                 player.action ++;
                 if(player.action % 3 == 0) currentAttackFrame ++;
@@ -422,6 +447,81 @@ int main()
             if ((int)(GetMusicTimePlayed(music[3])/GetMusicTimeLength(music[3])*100) == 99) {
                 gameState = 0;
             }
+            break;
+        case 3:
+            StopMusicStream(music[0]);
+            if (IsKeyDown(KEY_N)) {
+                gameState = 1;
+            }
+            // if (IsKeyDown(KEY_Q)) {
+            //     switch ()
+            //     {
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //     }
+            // }
+            // if (IsKeyDown(KEY_W)) {
+            //     case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            // }
+            // if (IsKeyDown(KEY_E)) {
+            //     case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            //         case 1:
+            //             break;
+            // }
             break;
         }
 
@@ -475,6 +575,40 @@ int main()
             case 2:
                 DrawTexture(titleTexture[1], 0, 0, WHITE);
                 DrawText(FormatText("%i", (int)(GetMusicTimePlayed(music[3])/GetMusicTimeLength(music[3])*100)), 10, screenHeight - 40, 25, GREEN);
+                break;
+            case 3:
+                DrawTexture(mapTexture[theMap], 0, 0, WHITE);
+                DrawTexture(titleTexture[2], 54, 108, WHITE);
+
+                DrawTexture(itemTexture[randoms(0, 9)], 456, 108, WHITE);
+                DrawTexture(itemTexture[randoms(0, 9)], 729, 108, WHITE);
+                DrawTexture(itemTexture[randoms(0, 9)], 1002, 108, WHITE);
+
+                DrawTexture(titleTexture[5], 456, 442, WHITE);
+                DrawTexture(titleTexture[6], 729, 442, WHITE);
+                DrawTexture(titleTexture[7], 1002, 442, WHITE);
+
+                DrawTexture(titleTexture[3], 456, 560, WHITE);
+                DrawTexture(titleTexture[4], 729, 560, WHITE);
+                DrawTexture(titleTexture[8], 1002, 560, WHITE);
+
+                DrawText(FormatText("HP :"),   90, 348, 28, GREEN);
+                DrawText(FormatText("SP :"),   90, 380, 28, GREEN);
+                DrawText(FormatText("Potion"),   90, 412, 28, GREEN);
+                DrawText(FormatText("Staminai"),   90, 444, 28, GREEN);
+                DrawText(FormatText("Movement"),   90, 476, 28, GREEN);
+                DrawText(FormatText("Immortality"),   90, 508, 28, GREEN);
+                DrawText(FormatText("Grant Revive"),   90, 540, 28, GREEN);
+                DrawText(FormatText("Extra Health"),   90, 572, 28, GREEN);
+
+                DrawText(FormatText("%i", randoms(0, 99)),   298, 348, 28, GREEN);
+                DrawText(FormatText("%i", randoms(0, 99)),   298, 380, 28, GREEN);
+                DrawText(FormatText("%i", randoms(0, 99)),   298, 412, 28, GREEN);
+                DrawText(FormatText("%i", randoms(0, 99)),   298, 444, 28, GREEN);
+                DrawText(FormatText("%i", randoms(0, 99)),   298, 476, 28, GREEN);
+                DrawText(FormatText("%i", randoms(0, 99)),   298, 508, 28, GREEN);
+                DrawText(FormatText("%i", randoms(0, 99)),   298, 540, 28, GREEN);
+                DrawText(FormatText("%i", randoms(0, 99)),   298, 572, 28, GREEN);
                 break;
             }
             
