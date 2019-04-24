@@ -30,6 +30,7 @@ int main()
     int currentPlayerFrame = 0;
     int currentAttackFrame = 0;
     int framesCounter = 0;
+    int timeCounter = 0;
     int framesSpeed = 8;
     int gameState = 0;
     int theMap = 0;
@@ -160,15 +161,54 @@ int main()
 
     struct Inventory
     {
-        int potion;
-        int stamina;
-        int immortality;
-        int speed;
-        int armor;
-        int revive;
+        int useStatus;
+        int timeCounter;
+        int itemValue;
+        int timeValue;
+        float effectValue;
     };
 
-    struct Inventory item = {3, 3, 0, 0, 0, 0};
+    struct System
+    {
+        int level;
+        int killEnemy;
+        float damageDone;
+    };
+
+    struct System game = {1, 0, 0};
+
+    struct Inventory item[6];
+
+    item[0].useStatus = 0; //Potion
+    item[0].timeCounter = 0;
+    item[0].itemValue = 100;
+    item[0].timeValue = 0;
+
+    item[1].useStatus = 0; //Stamina
+    item[1].timeCounter = 0;
+    item[1].itemValue = 100;
+    item[1].timeValue = 0;
+
+    item[2].useStatus = 0; //Immortality Time
+    item[2].timeCounter = 0;
+    item[2].itemValue = 100;
+    item[2].timeValue = 5;
+
+    item[3].useStatus = 0; //Movement Speed Up
+    item[3].timeCounter = 0;
+    item[3].itemValue = 100;
+    item[3].timeValue = 3;
+
+    item[4].useStatus = 0; //Extra Health
+    item[4].timeCounter = 0;
+    item[4].itemValue = 100;
+    item[4].timeValue = 0;
+    item[4].effectValue = 0;
+
+    item[5].useStatus = 0; //Grant Revive
+    item[5].timeCounter = 0;
+    item[5].itemValue = 100;
+    item[5].timeValue = 0;
 
     struct Character player = {100, 100, 10, 7, 50, 50, 1, 0, 0, 0, false, 0};
 
@@ -257,6 +297,7 @@ int main()
     Rectangle playerAttackFrame = { 0.0f, 0.0f, 50.0, 50.0};
     Rectangle playerStamina =  {45, 644, 165.0, 20};
     Rectangle playerHp =  {45, 686, 165.0, 20};
+    Rectangle armorHp =  {45, 686, 0, 20};
 
     Rectangle mapBox[4];
     mapBox[0].x = 69;
@@ -334,6 +375,7 @@ int main()
             PlayMusicStream(music[1]);
             player.state = 0;
             framesCounter++;
+            timeCounter++;
 
             if(currentEnemy < enemyValue && framesCounter%7 == 0){
                 enemy[currentEnemy].type = randoms(0, 4);
@@ -421,15 +463,33 @@ int main()
                 }
 
                 if (enemy[i].hitPlayer && framesCounter%7 == 0 && enemy[i].state > -1){
-                    player.hp -= enemy[i].attack;
-                    playerHp.width = player.hp * 165/player.maxHp;
+                    if (enemy[i].attack > player.defend) {
+                        if (item[4].effectValue > 0) {
+                            item[4].effectValue -= enemy[i].attack;
+                            armorHp.width = (item[4].effectValue/50)*80;
+                        } else {
+                            player.hp -= enemy[i].attack - player.defend;
+                        }
+                    }
+                    playerHp.width = (player.hp * 165)/player.maxHp;
                 }
             }
 
             if(player.hp <= 0) {
-                player.hp = 0;
-                player.state = -1;
-                gameState = 2;
+                if (item[5].itemValue > 0) {
+                    player.hp = 100;
+                    item[5].itemValue -= 1;
+                } else {
+                    player.hp = 0;
+                    player.state = -1;
+                    gameState = 2;
+                    for (int i = 0; i < currentEnemy; ++i)
+                    {
+                        if (enemy[i].state == -1) {
+                            game.killEnemy += 1;
+                        }
+                    }
+                }
             } else {
                 float playerTempX = playerBox.x;
                 float playerTempY = playerBox.y;
@@ -513,6 +573,7 @@ int main()
                     for(int i = 0; i < currentEnemy; i++){
                         if(CheckCollisionRecs(playerAttackBox, enemyBox[i])){
                             enemy[i].hp -= player.attack;
+                            game.damageDone += player.attack;
                             if(enemy[i].hp <= 0){
                                 enemy[i].hp = 0;
                                 enemy[i].state = -1;
@@ -520,23 +581,36 @@ int main()
                         }
                     }
                 }
-                if (IsKeyPressed(KEY_A)) {
-                    player.hp += 30;
-                    item.potion -= 1;
+                if (IsKeyPressed(KEY_A) && item[0].itemValue >= 1) {
+                    item[0].itemValue -= 1;
+                    for (int i = 0; i < 30; ++i)
+                    {
+                        if (player.hp != player.maxHp) {
+                            player.hp += 1;
+                        }
+                        playerHp.width = (player.hp * 165)/player.maxHp;
+                    }
                 }
-                if (IsKeyPressed(KEY_S)) {
+                if (IsKeyPressed(KEY_S) && item[1].itemValue >= 1) {
                     player.stamina += 20;
-                    item.stamina -= 1;
+                    item[1].itemValue -= 1;
+                    playerStamina.width = player.stamina * 165/player.maxStamina;
                 }
-                // if (IsKeyPressed(KEY_3)) {
-
-                // }
-                // if (IsKeyPressed(KEY_4)) {
-
-                // }
-                // if (IsKeyPressed(KEY_5)) {
-
-                // }
+                if (IsKeyPressed(KEY_D) && item[2].useStatus == 0 && item[2].itemValue >= 1) {
+                    item[2].itemValue -= 1;
+                    item[2].useStatus = 1;
+                    item[2].timeCounter = item[2].timeValue;
+                }
+                if (IsKeyPressed(KEY_F) && item[3].useStatus == 0 && item[3].itemValue >= 1) {
+                    item[3].itemValue -= 1;
+                    item[3].useStatus = 1;
+                    item[3].timeCounter = item[3].timeValue;
+                }
+                if (IsKeyPressed(KEY_G) && item[4].useStatus == 0 && item[4].itemValue >= 1 && item[4].effectValue <= 0) {
+                    item[4].itemValue -= 1;
+                    item[4].effectValue = 50;
+                    armorHp.width = (item[4].effectValue/50)*80;
+                }
             }
 
             for (int i = 0; i < currentEnemy; ++i) //Cheack End of Rounds
@@ -546,6 +620,7 @@ int main()
                     item1 = randoms(0, 9);
                     item2 = randoms(0, 9);
                     item3 = randoms(0, 9);
+                    game.killEnemy += enemyValue;
                 }
                 if (enemy[i].state == -1) {
                     killEnemyValue += 1;
@@ -554,7 +629,7 @@ int main()
             }
             if (killEnemyValue != enemyValue) {
                 killEnemyValue = 0;
-            } // ------
+            } // ------Cheack End of Rounds
 
             if(player.action > 0){
                 player.action ++;
@@ -586,7 +661,7 @@ int main()
                 framesCounter = 0;
                 if (player.state > 0) currentPlayerFrame++;
                 player.stamina += player.staminaRecove;
-                if(player.stamina > 50) player.stamina = 50;
+                if(player.stamina > player.maxStamina) player.stamina = player.maxStamina;
                 if (currentPlayerFrame > 2) currentPlayerFrame = 0;
                 playerFrame.x = (float)currentPlayerFrame*(float)playerTexture[player.texture].width/3;
 
@@ -595,7 +670,36 @@ int main()
                     if (enemy[i].frame > 2) enemy[i].frame = 0;
                     enemyFrame[i].x = (float)enemy[i].frame*(float)enemyTexture[enemy[i].texture].width/3;
                 }
-
+            }
+            if (timeCounter >= 60) {
+                timeCounter = 0;
+                for (int i = 0; i < 6; ++i)
+                {
+                    if (item[i].useStatus == 1) {
+                        item[i].timeCounter -= 1;
+                        switch (i)
+                        {
+                            case 2:
+                                player.defend = player.defend + 1000;
+                                break;
+                            case 3:
+                                player.speed = player.speed + 10;
+                                break;
+                        }
+                        if (item[i].timeCounter == 0) {
+                            item[i].useStatus = 0;
+                            switch (i)
+                            {
+                                case 2:
+                                    player.defend = player.defend - 5000;
+                                    break;
+                                case 3:
+                                    player.speed = player.speed - 30;
+                                    break;
+                            }
+                        }
+                    }
+                }
             }
             playerStamina.width = player.stamina * 165/player.maxStamina;
             break;
@@ -603,8 +707,24 @@ int main()
             StopMusicStream(music[1]);
             PlayMusicStream(music[3]);
             // delay(5);
-            if ((int)(GetMusicTimePlayed(music[3])/GetMusicTimeLength(music[3])*100) == 99) {
+            if (IsKeyPressed(KEY_R)) {
+                gameState = 1;
+                player.hp = 100;
+                theMap = randoms(0, 4);
+                enemyValue = randoms(1, 9);
+                currentEnemy = 0;
+                game.level = 1;
+                game.killEnemy = 0;
+                game.damageDone = 0;
+            }
+            if (IsKeyPressed(KEY_H)) {
                 gameState = 0;
+                theMap = randoms(0, 4);
+                enemyValue = randoms(1, 9);
+                currentEnemy = 0;
+                game.level = 1;
+                game.killEnemy = 0;
+                game.damageDone = 0;
             }
             break;
         case 3:
@@ -614,27 +734,28 @@ int main()
                 theMap = randoms(0, 4);
                 enemyValue = randoms(1, 9);
                 currentEnemy = 0;
+                game.level += 1;
             }
             if (IsKeyDown(KEY_Q)) {
                 switch (item1)
                 {
                     case 6:
-                        item.potion += 1;
+                        item[0].itemValue += 1;
                         break;
                     case 9:
-                        item.stamina += 1;
+                        item[1].itemValue += 1;
                         break;
                     case 3:
-                        item.immortality += 1;
+                        item[2].itemValue += 1;
                         break;
                     case 8:
-                        item.speed += 1;
+                        item[3].itemValue += 1;
                         break;
                     case 2:
-                        item.armor += 1;
+                        item[4].itemValue += 1;
                         break;
                     case 7:
-                        item.revive += 1;
+                        item[5].itemValue += 1;
                         break;
                     case 0:
                         player.attack += 10;
@@ -658,22 +779,22 @@ int main()
                 switch (item2)
                 {
                     case 6:
-                        item.potion += 1;
+                        item[0].itemValue += 1;
                         break;
                     case 9:
-                        item.stamina += 1;
+                        item[1].itemValue += 1;
                         break;
                     case 3:
-                        item.immortality += 1;
+                        item[2].itemValue += 1;
                         break;
                     case 8:
-                        item.speed += 1;
+                        item[3].itemValue += 1;
                         break;
                     case 2:
-                        item.armor += 1;
+                        item[4].itemValue += 1;
                         break;
                     case 7:
-                        item.revive += 1;
+                        item[5].itemValue += 1;
                         break;
                     case 0:
                         player.attack += 10;
@@ -697,22 +818,22 @@ int main()
                 switch (item3)
                 {
                     case 6:
-                        item.potion += 1;
+                        item[0].itemValue += 1;
                         break;
                     case 9:
-                        item.stamina += 1;
+                        item[1].itemValue += 1;
                         break;
                     case 3:
-                        item.immortality += 1;
+                        item[2].itemValue += 1;
                         break;
                     case 8:
-                        item.speed += 1;
+                        item[3].itemValue += 1;
                         break;
                     case 2:
-                        item.armor += 1;
+                        item[4].itemValue += 1;
                         break;
                     case 7:
-                        item.revive += 1;
+                        item[5].itemValue += 1;
                         break;
                     case 0:
                         player.attack += 10;
@@ -773,8 +894,11 @@ int main()
                 DrawText(FormatText("%i", player.hitWall), 0, 0, 50, GREEN);
                 DrawText(FormatText("%f", playerBox.x), 0, 60, 50, GREEN);
 
+                DrawText(FormatText("%f", player.speed), 0, 120, 50, GREEN);
+
                 DrawTexture(titleTexture[15], 0, 80, WHITE);
                 DrawRectangleRec(playerHp, GREEN);
+                DrawRectangleRec(armorHp, BLUE);
                 DrawRectangleRec(playerStamina, BLUE);
                 DrawTexture(titleTexture[9], 265, 661, WHITE);
                 DrawTexture(titleTexture[10], 428, 661, WHITE);
@@ -782,16 +906,19 @@ int main()
                 DrawTexture(titleTexture[12], 754, 661, WHITE);
                 DrawTexture(titleTexture[13], 917, 661, WHITE);
                 DrawTexture(titleTexture[14], 1080, 661, WHITE);
-                DrawText(FormatText("x %i", item.potion), 337, 674, 28, GREEN);
-                DrawText(FormatText("x %i", item.stamina), 500, 674, 28, GREEN);
-                DrawText(FormatText("x %i", item.immortality), 663, 674, 28, GREEN);
-                DrawText(FormatText("x %i", item.speed), 826, 674, 28, GREEN);
-                DrawText(FormatText("x %i", item.armor), 989, 674, 28, GREEN);
-                DrawText(FormatText("x %i", item.revive), 1152, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item[0].itemValue), 337, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item[1].itemValue), 500, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item[2].itemValue), 663, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item[3].itemValue), 826, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item[4].itemValue), 989, 674, 28, GREEN);
+                DrawText(FormatText("x %i", item[5].itemValue), 1152, 674, 28, GREEN);
                 break;
             case 2:
+                DrawTexture(mapTexture[theMap], 0, 0, WHITE);
                 DrawTexture(titleTexture[1], 0, 0, WHITE);
-                DrawText(FormatText("%i", (int)(GetMusicTimePlayed(music[3])/GetMusicTimeLength(music[3])*100)), 10, screenHeight - 40, 25, GREEN);
+                DrawText(FormatText("%i", game.level),   727, 246, 28, BLACK);
+                DrawText(FormatText("%i", game.killEnemy),   727, 338, 28, BLACK);
+                DrawText(FormatText("%0.2f", game.damageDone),   727, 435, 28, BLACK);
                 break;
             case 3:
                 DrawTexture(mapTexture[theMap], 0, 0, WHITE);
