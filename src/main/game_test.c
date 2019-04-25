@@ -299,8 +299,8 @@ int main()
     Rectangle playerHp =  {45, 686, 165.0, 20};
     Rectangle armorHp =  {45, 686, 0, 20};
 
-    Rectangle mapBox[4];
-    mapBox[0].x = 69;
+    Rectangle mapBox[24];
+    mapBox[0].x = 69; //--------- 1
     mapBox[0].y = 357;
     mapBox[0].width = 153;
     mapBox[0].height = 154;
@@ -318,7 +318,87 @@ int main()
     mapBox[3].x = 1058;
     mapBox[3].y = 212;
     mapBox[3].width = 150;
-    mapBox[3].height = 158;
+    mapBox[3].height = 158; //---------
+
+    mapBox[4].x = 203; //--------- 2
+    mapBox[4].y = 200;
+    mapBox[4].width = 380;
+    mapBox[4].height = 76;
+
+    mapBox[5].x = 695;
+    mapBox[5].y = 200;
+    mapBox[5].width = 380;
+    mapBox[5].height = 76;
+
+    mapBox[6].x = 203;
+    mapBox[6].y = 450;
+    mapBox[6].width = 380;
+    mapBox[6].height = 76;
+
+    mapBox[7].x = 695;
+    mapBox[7].y = 450;
+    mapBox[7].width = 380;
+    mapBox[7].height = 76; //---------
+
+    mapBox[12].x = 74; //--------- 3
+    mapBox[12].y = 194;
+    mapBox[12].width = 474;
+    mapBox[12].height = 141;
+
+    mapBox[13].x = 407;
+    mapBox[13].y = 338;
+    mapBox[13].width = 141;
+    mapBox[13].height = 156;
+
+    mapBox[14].x = 731;
+    mapBox[14].y = 198;
+    mapBox[14].width = 141;
+    mapBox[14].height = 156;
+
+    mapBox[15].x = 731;
+    mapBox[15].y = 354;
+    mapBox[15].width = 474;
+    mapBox[15].height = 141; //---------
+
+    mapBox[16].x = 238; //--------- 4
+    mapBox[16].y = 228;
+    mapBox[16].width = 146;
+    mapBox[16].height = 265;
+
+    mapBox[17].x = 535;
+    mapBox[17].y = 71;
+    mapBox[17].width = 209;
+    mapBox[17].height = 141;
+
+    mapBox[18].x = 895;
+    mapBox[18].y = 228;
+    mapBox[18].width = 146;
+    mapBox[18].height = 265;
+
+    mapBox[19].x = 535;
+    mapBox[19].y = 510;
+    mapBox[19].width = 209;
+    mapBox[19].height = 141; //---------
+
+    mapBox[20].x = 77; //--------- 5
+    mapBox[20].y = 75;
+    mapBox[20].width = 1128;
+    mapBox[20].height = 75;
+
+    mapBox[21].x = 533;
+    mapBox[21].y = 150;
+    mapBox[21].width = 213;
+    mapBox[21].height = 124;
+
+    mapBox[22].x = 533;
+    mapBox[22].y = 450;
+    mapBox[22].width = 213;
+    mapBox[22].height = 124;
+
+    mapBox[23].x = 77;
+    mapBox[23].y = 574;
+    mapBox[23].width = 1128;
+    mapBox[23].height = 75; //---------
 
 
     Rectangle enemyBox[20];
@@ -495,6 +575,39 @@ int main()
                 float playerTempY = playerBox.y;
                 if (IsKeyDown(KEY_RIGHT)) {
                     playerBox.x += player.speed;
+                    switch (theMap)
+                    {
+                        case 0:
+                            for(int i = 0; i < 4; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 1:
+                            for(int i = 4; i < 8; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 2:
+                            for(int i = 12; i < 16; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 3:
+                            for(int i = 16; i < 20; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 4:
+                            for(int i = 20; i < 24; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                    }
                     for(int i = 0; i < 4; i ++){
                         player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
                         if(player.hitWall) break;
@@ -513,9 +626,38 @@ int main()
                 }
                 if (IsKeyDown(KEY_LEFT)) {
                     playerBox.x -= player.speed;
-                    for(int i = 0; i < 4; i ++){
-                        player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
-                        if(player.hitWall) break;
+                    switch (theMap)
+                    {
+                        case 0:
+                            for(int i = 0; i < 4; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 1:
+                            for(int i = 4; i < 8; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 2:
+                            for(int i = 12; i < 16; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 3:
+                            for(int i = 16; i < 20; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 4:
+                            for(int i = 20; i < 24; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
                     }
                     if(player.hitWall){
                         playerBox.x = playerTempX;
@@ -531,9 +673,38 @@ int main()
                 }
                 if (IsKeyDown(KEY_UP)) {
                     playerBox.y -= player.speed;
-                    for(int i = 0; i < 4; i ++){
-                        player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
-                        if(player.hitWall) break;
+                    switch (theMap)
+                    {
+                        case 0:
+                            for(int i = 0; i < 4; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 1:
+                            for(int i = 4; i < 8; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 2:
+                            for(int i = 12; i < 16; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 3:
+                            for(int i = 16; i < 20; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 4:
+                            for(int i = 20; i < 24; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
                     }
                     if(player.hitWall){
                         playerBox.x = playerTempX;
@@ -549,9 +720,38 @@ int main()
                 }
                 if (IsKeyDown(KEY_DOWN)) {
                     playerBox.y += player.speed;
-                    for(int i = 0; i < 4; i ++){
-                        player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
-                        if(player.hitWall) break;
+                    switch (theMap)
+                    {
+                        case 0:
+                            for(int i = 0; i < 4; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 1:
+                            for(int i = 4; i < 8; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 2:
+                            for(int i = 12; i < 16; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 3:
+                            for(int i = 16; i < 20; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
+                        case 4:
+                            for(int i = 20; i < 24; i ++){
+                                player.hitWall = CheckCollisionRecs(playerBox, mapBox[i]);
+                                if(player.hitWall) break;
+                            }
+                            break;
                     }
                     if(player.hitWall){
                         playerBox.x = playerTempX;
