@@ -157,6 +157,7 @@ int main()
         int action;
         bool hitPlayer;
         bool hitWall;
+        Vector2 center;
     };
 
     struct Inventory
@@ -252,7 +253,7 @@ int main()
 
     monster[3].type = 3;
     monster[3].hp = 30;
-    monster[3].attack = 0; //1
+    monster[3].attack = 0; //2
     monster[3].speed = 3;
     monster[3].atkDelay = 0;
     monster[3].texture = 0;
@@ -275,17 +276,6 @@ int main()
     monster[4].hitWall = false;
 
     struct Enemy enemy[20];
-    // enemy[0].type = 2;
-    // enemy[0].hp = 200;
-    // enemy[0].attack = 2;
-    // enemy[0].speed = 4;
-    // enemy[0].atkDelay = 0.5;
-    // enemy[0].texture = 0;
-    // enemy[0].frame = 0;
-    // enemy[0].state = 1;
-    // enemy[0].action = 0;
-    // enemy[0].hitPlayer = false;
-    // enemy[0].hitWall = false;
 
     //----------------------------------------------------------------------------------
 
@@ -402,17 +392,8 @@ int main()
 
 
     Rectangle enemyBox[20];
-    // enemyBox[0].x = 150;
-    // enemyBox[0].y = 150;
-    // enemyBox[0].width = 50;
-    // enemyBox[0].height = 50;
-
+   
     Rectangle enemyFrame[20];
-    // enemyFrame[0].x = 0;
-    // enemyFrame[0].y = 0;
-    // enemyFrame[0].width = 50;
-    // enemyFrame[0].height = 50;
-    // Rectangle attackFrame = { 0.0f, 0.0f, (float)attack.width/5, (float)attack.height };
     //----------------------------------------------------------------------------------
 
     // Vector2--------------------------------------------------------------------------
@@ -479,36 +460,165 @@ int main()
                 enemyFrame[currentEnemy].y = 0;
                 enemyFrame[currentEnemy].width = 50;
                 enemyFrame[currentEnemy].height = 50;
+                
+                enemy[currentEnemy].center.x = enemyBox[currentEnemy].x+25;
+                enemy[currentEnemy].center.y = enemyBox[currentEnemy].y+25;
                 currentEnemy ++;
             }
 
             // Update
             //----------------------------------------------------------------------------------
             for(int i = 0; i < currentEnemy; i++){
-                enemy[i].hitPlayer = CheckCollisionRecs(playerBox, enemyBox[i]);
-                if(!enemy[i].hitPlayer){
-                    float distanceX = abs(enemyBox[i].x - playerBox.x);
-                    float distanceY = abs(enemyBox[i].y - playerBox.y);
-                    if((distanceX <= distanceY && distanceX != 0) || distanceY == 0){
-                        if(enemyBox[i].x < playerBox.x){
-                            enemy[i].texture = 0;
-                            enemyBox[i].x += enemy[i].speed;
-                        } else if(enemyBox[i].x > playerBox.x){
-                            enemy[i].texture = 1;
-                            enemyBox[i].x -= enemy[i].speed;
+                switch(enemy[i].type){
+                    case 3:
+                        enemy[i].center.x = enemyBox[i].x+25;
+                        enemy[i].center.y = enemyBox[i].y+25;
+                        enemy[i].hitPlayer = CheckCollisionCircleRec(enemy[i].center,150.0, playerBox);
+                        if(!enemy[i].hitPlayer && !enemy[i].hitWall){
+                            float distanceX = abs(enemyBox[i].x - playerBox.x);
+                            float distanceY = abs(enemyBox[i].y - playerBox.y);
+                            if((distanceX <= distanceY && distanceX != 0) || distanceY == 0){
+                                if(enemyBox[i].x < playerBox.x){
+                                    enemy[i].texture = 0;
+                                    enemyBox[i].x += enemy[i].speed;
+                                } else if(enemyBox[i].x > playerBox.x){
+                                    enemy[i].texture = 1;
+                                    enemyBox[i].x -= enemy[i].speed;
+                                }
+                                if(distanceX < enemy[i].speed) enemyBox[i].x = playerBox.x;
+                            } else {
+                                if(enemyBox[i].y < playerBox.y){
+                                    enemy[i].texture = 2;
+                                    enemyBox[i].y += enemy[i].speed;
+                                }
+                                else if(enemyBox[i].y > playerBox.y){
+                                    enemy[i].texture = 3;
+                                    enemyBox[i].y -= enemy[i].speed;
+                                }
+                                if(distanceY < enemy[i].speed) enemyBox[i].y = playerBox.y;
+                            }          
+                        } else {
+                            float distanceX = abs(enemyBox[i].x - playerBox.x);
+                            float distanceY = abs(enemyBox[i].y - playerBox.y);
+                            if((distanceX <= distanceY) && distanceY != 0){
+                                if(enemyBox[i].y < playerBox.y){
+                                    enemy[i].texture = 2;
+                                } else if(enemyBox[i].y > playerBox.y){
+                                    enemy[i].texture = 3;
+                                }
+                            } else {
+                                if(enemyBox[i].x < playerBox.x){
+                                    enemy[i].texture = 0;
+                                }
+                                else if(enemyBox[i].x > playerBox.x){
+                                    enemy[i].texture = 1;
+                                }
+                            }          
                         }
-                        if(distanceX < enemy[i].speed) enemyBox[i].x = playerBox.x;
-                    } else {
-                        if(enemyBox[i].y < playerBox.y){
-                            enemy[i].texture = 2;
-                            enemyBox[i].y += enemy[i].speed;
+                        break;
+                    default:
+                        enemy[i].hitPlayer = CheckCollisionRecs(playerBox, enemyBox[i]);
+                        if(!enemy[i].hitPlayer){
+                            float distanceX = abs(enemyBox[i].x - playerBox.x);
+                            float distanceY = abs(enemyBox[i].y - playerBox.y);
+                            float temp_x = enemyBox[i].x;
+                            float temp_y = enemyBox[i].y;
+                            if((distanceX <= distanceY && distanceX != 0) || distanceY == 0){
+                                if(enemyBox[i].x < playerBox.x){
+                                    enemy[i].texture = 0;
+                                    enemyBox[i].x += enemy[i].speed;
+                                } else if(enemyBox[i].x > playerBox.x){
+                                    enemy[i].texture = 1;
+                                    enemyBox[i].x -= enemy[i].speed;
+                                }
+                                if(distanceX < enemy[i].speed) enemyBox[i].x = playerBox.x;
+                                switch (theMap) {
+                                    case 0:
+                                        for(int j = 0; j < 4; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                    case 1:
+                                        for(int j = 4; j < 8; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                    case 2:
+                                        for(int j = 8; j < 12; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                    case 3:
+                                        for(int j = 12; j < 16; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                    case 4:
+                                        for(int j = 16; j < 20; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                }
+                                if(enemy[i].hitWall){
+                                    enemyBox[i].x = temp_x;
+                                    if(enemyBox[i].y < playerBox.y) enemyBox[i].y += enemy[i].speed/2;
+                                    else if (enemyBox[i].y > playerBox.y) enemyBox[i].y -= enemy[i].speed/2;
+                                }
+                            } else {
+                                if(enemyBox[i].y < playerBox.y){
+                                    enemy[i].texture = 2;
+                                    enemyBox[i].y += enemy[i].speed;
+                                }
+                                else if(enemyBox[i].y > playerBox.y){
+                                    enemy[i].texture = 3;
+                                    enemyBox[i].y -= enemy[i].speed;
+                                }
+                                if(distanceY < enemy[i].speed) enemyBox[i].y = playerBox.y;
+                                switch (theMap) {
+                                    case 0:
+                                        for(int j = 0; j < 4; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                    case 1:
+                                        for(int j = 4; j < 8; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                    case 2:
+                                        for(int j = 8; j < 12; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                    case 3:
+                                        for(int j = 12; j < 16; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                    case 4:
+                                        for(int j = 16; j < 20; j ++){
+                                            enemy[i].hitWall = CheckCollisionRecs(enemyBox[i], mapBox[j]);
+                                            if(enemy[i].hitWall) break;
+                                        }
+                                        break;
+                                }
+                                if(enemy[i].hitWall){
+                                    enemyBox[i].y = temp_y;
+                                    if(enemyBox[i].x < playerBox.x) enemyBox[i].x += enemy[i].speed/2;
+                                    else if (enemyBox[i].x > playerBox.x) enemyBox[i].x -= enemy[i].speed/2;
+                                }
+                            }          
                         }
-                        else if(enemyBox[i].y > playerBox.y){
-                            enemy[i].texture = 3;
-                            enemyBox[i].y -= enemy[i].speed;
-                        }
-                        if(distanceY < enemy[i].speed) enemyBox[i].y = playerBox.y;
-                    }
+               
                 }
 
                 switch(enemy[i].type){
@@ -1087,10 +1197,7 @@ int main()
                     default:
                         DrawTexturePro(attackTexture[player.texture], playerAttackFrame, playerAttackBox, origin, 0.0, WHITE);
                 }
-                DrawText(FormatText("%i", player.hitWall), 0, 0, 50, GREEN);
-                DrawText(FormatText("%f", playerBox.x), 0, 60, 50, GREEN);
-
-                DrawText(FormatText("%f", player.speed), 0, 120, 50, GREEN);
+                DrawText(FormatText("%i", enemy[0].hitWall), 0, 0, 50, GREEN);
 
                 DrawTexture(titleTexture[15], 0, 80, WHITE);
                 DrawRectangleRec(playerHp, GREEN);
