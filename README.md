@@ -11,13 +11,13 @@
 &emsp;Raylib
 ## Download And Play<br>
 &emsp;<img src="Download/img_1.png" width="780px" height="420px"><br>
-&emsp;[DOWNLOAD:(https://github.com/61070078/COMPRO)]<br>
+&emsp;1. [DOWNLOAD:(https://github.com/61070078/COMPRO)]<br>
 &emsp;<img src="Download/img_2.png" width="780px" height="420px"><br>
-&emsp;Download Zip File<br>
+&emsp;2. Download Zip File<br>
 &emsp;<img src="Download/img_3.png" width="780px" height="420px"><br>
-&emsp;Go to folder--> SRC --> Main --> Lost_Fantasy.exe<br>
+&emsp;3. Go to folder--> SRC --> Main --> Lost_Fantasy.exe<br>
 <img src="src/IMG/Title/manu_1.png" width="780px" height="420px"><br>
-&emsp;And Play !!!!
+&emsp;4. And Play !!!!
 ## Tutorial<br>
 &emsp;<img src="src/IMG/Tutorial/manu.png" width="780px" height="420px"><br>
 &emsp;กด Enter เพื่อเล่นเกม<br>
