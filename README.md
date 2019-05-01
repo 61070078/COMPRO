@@ -45,4 +45,4 @@
 ## Special Thanks<br>
 |**รูป**|<img src="https://github.com/azurelisz/KitCash/blob/master/Pics/ksc.jpg" width="120px" height="120px">|<img src="https://github.com/azurelisz/KitCash/blob/master/Pics/pw.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|
-|**Name**|**Asst Profressor Kitsuchart Pasupa**|**Asst Profressor Panwit Tuwanut **|
+|**Name**|**Asst Profressor Kitsuchart Pasupa**|**Asst Profressor Panwit Tuwanut**|
