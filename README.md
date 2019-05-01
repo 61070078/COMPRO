@@ -1,6 +1,6 @@
 # LOST FANTASY
-<img src="src/IMG/Title/manu.png" width="780px" height="220px">
-## ABSTRACT
+|<img src="src/IMG/Title/manu.png" width="780px" height="220px">|
+## ABSTRACT<br>
 &emsp;เนื่องในปัจจุบันสภาพจิตใจของผู้คนในสังคมส่อแววที่จะเป็นโรคซึมเศร้าจากการที่สั่งสมความเครียดในชีวิต 
     ไม่ว่าจะจากการทำงาน การเรียนหนังสือ หรือแม้กระทั้งการใช้ชีวิตในครอบครัว กลุ่มผู้พัฒนาจึงเล็งเห็นถึงชีวิตของ
     เด็กมหาลัยว่ามีการสั่งสมความเครียดจากการเรียนหนังสือ จึงได้ทำการพัฒนาเกมที่จะช่วยในการคลายความเครียด
@@ -14,6 +14,8 @@
 &emsp;Download Zip<br>
 &emsp;Go to --> SRC --> Main --> Lost_Fantasy.exe<br>
 &emsp;And Play !!!!
+## Tutorial<br>
+&emsp;Test
 ## Developer<br>
 |<img src="Team/Tae.jpg" width="120px" height="120px">|<img src="Team/Poon.jpg" width="120px" height="120px">|<img src="Team/Ice.jpg" width="120px" height="120px">|<img src="Team/Tag.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|:---:|
