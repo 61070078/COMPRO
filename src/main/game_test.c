@@ -13,7 +13,7 @@ int main()
     int enemyTextureValue = 20;
     int soundFxValue = 1;
     int musicValue = 4;
-    int titleTextureValue = 16;
+    int titleTextureValue = 17;
     int itemTextureValue = 10;
 
     int enemyValue = 0;
@@ -106,6 +106,7 @@ int main()
     titleTexture[13] = LoadTexture("../IMG/Title/Bar/bar_item_5.png");
     titleTexture[14] = LoadTexture("../IMG/Title/Bar/bar_item_6.png");
     titleTexture[15] = LoadTexture("../IMG/Title/Bar/bar.png");
+    titleTexture[16] = LoadTexture("../IMG/Title/Bar/B_A.png");
 
     Music music[musicValue];
     music[0] = LoadMusicStream("../Audio/Manu/Theme1.ogg");
@@ -392,7 +393,7 @@ int main()
 
 
     Rectangle enemyBox[20];
-   
+
     Rectangle enemyFrame[20];
     //----------------------------------------------------------------------------------
 
@@ -424,11 +425,11 @@ int main()
             StopMusicStream(music[1]);
             StopMusicStream(music[2]);
             StopMusicStream(music[3]);
-            if (IsKeyDown(KEY_G)) {
+            if (IsKeyDown(KEY_ENTER)) {
                 gameState = 1;
                 player.hp = 100;
-                theMap = 4;
-                enemyValue = 1;
+                theMap = randoms(0, 4);
+                enemyValue = randoms(0, 9);
             }
             break;
         case 1:
@@ -460,7 +461,7 @@ int main()
                 enemyFrame[currentEnemy].y = 0;
                 enemyFrame[currentEnemy].width = 50;
                 enemyFrame[currentEnemy].height = 50;
-                
+
                 enemy[currentEnemy].center.x = enemyBox[currentEnemy].x+25;
                 enemy[currentEnemy].center.y = enemyBox[currentEnemy].y+25;
                 currentEnemy ++;
@@ -496,7 +497,7 @@ int main()
                                     enemyBox[i].y -= enemy[i].speed;
                                 }
                                 if(distanceY < enemy[i].speed) enemyBox[i].y = playerBox.y;
-                            }          
+                            }
                         } else {
                             float distanceX = abs(enemyBox[i].x - playerBox.x);
                             float distanceY = abs(enemyBox[i].y - playerBox.y);
@@ -513,7 +514,7 @@ int main()
                                 else if(enemyBox[i].x > playerBox.x){
                                     enemy[i].texture = 1;
                                 }
-                            }          
+                            }
                         }
                         break;
                     default:
@@ -624,7 +625,7 @@ int main()
                                     enemy.action = 1; 
                             }
                         }
-               
+
                 }
 
                 switch(enemy[i].type){
@@ -1215,6 +1216,7 @@ int main()
                 DrawTexture(titleTexture[12], 754, 661, WHITE);
                 DrawTexture(titleTexture[13], 917, 661, WHITE);
                 DrawTexture(titleTexture[14], 1080, 661, WHITE);
+                DrawTexture(titleTexture[16], 0, 0, WHITE);
                 DrawText(FormatText("x %i", item[0].itemValue), 337, 674, 28, GREEN);
                 DrawText(FormatText("x %i", item[1].itemValue), 500, 674, 28, GREEN);
                 DrawText(FormatText("x %i", item[2].itemValue), 663, 674, 28, GREEN);
