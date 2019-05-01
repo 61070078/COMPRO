@@ -37,7 +37,7 @@
 &emsp;4. กด R เพื่อเล่นอีกรอบ<br>
 &emsp;5. กด H เพื่อกลับไปหน้า<br>
 ## Developer<br>
-|:---:|<img src="Team/Tae.jpg" width="120px" height="120px">|<img src="Team/Poon.jpg" width="120px" height="120px">|<img src="Team/Ice.jpg" width="120px" height="120px">|<img src="Team/Tag.jpg" width="120px" height="120px">|
+|**รูป**|<img src="Team/Tae.jpg" width="120px" height="120px">|<img src="Team/Poon.jpg" width="120px" height="120px">|<img src="Team/Ice.jpg" width="120px" height="120px">|<img src="Team/Tag.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|:---:|:---:|
 |**Name**|**Tae**|**Poon**|**Ice**|**Tag**|
 |**Student ID**|**61070078**|**61070006**|**61070048**|**61070008**|
