@@ -43,6 +43,6 @@
 |**Student ID**|**61070078**|**61070006**|**61070048**|**61070008**|
 |**GitHub**|**<a href="https://github.com/61070078">@61070078</a>**|**<a href="https://github.com/KISSADAPA">@KISSADAPA</a>**|**<a href="https://github.com/laxezice?tab=following">@laxezice**|**<a href="https://github.com/KasitinYenutok">@KasitinYenutok</a>**|
 ## Special Thanks<br>
-|**รูป**|<img href="https://github.com/azurelisz/KitCash/blob/master/Pics/ksc.jpg" width="120px" height="120px">|<img href="https://github.com/azurelisz/KitCash/blob/master/Pics/pw.jpg" width="120px" height="120px">|
+|**รูป**|<img src="https://github.com/azurelisz/KitCash/blob/master/Pics/ksc.jpg" width="120px" height="120px">|<img src="https://github.com/azurelisz/KitCash/blob/master/Pics/pw.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|
 |**Name**|**Asst Profressor Kitsuchart Pasupa**|**Asst Profressor Panwit Tuwanut **|
