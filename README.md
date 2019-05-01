@@ -40,3 +40,4 @@
 |<img src="Team/Tae.jpg" width="120px" height="120px">|<img src="Team/Poon.jpg" width="120px" height="120px">|<img src="Team/Ice.jpg" width="120px" height="120px">|<img src="Team/Tag.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|:---:|
 |**Tae**|**Poon**|**Ice**|**Tag**|
+|**61070078**|**61070006**|**61070048**|**61070008**|
