@@ -6,18 +6,21 @@
     สะสมจากการใช้ชีวิต เพื่อให้ผู้เล่นได้รุ้สึกถึงความสนุกและผ่อนคลาย โครงงานนี้จึงถูกพัฒนาขึ้นโดยเป็น
     เกมแนว rough-like ขึ้นมาดังนี้
 <br>
-# TECHNOLOGY<br>
+## TECHNOLOGY<br>
 &emsp;C Language<br>
 &emsp;Raylib<br>
 <br> 
-# Submitted by<br>
+## Submitted by<br>
 &emsp;นาย ธนวัตน์ จันทร์หอม [61070078]<br>
 &emsp;นาย กษิติน เย็นอุทก [61070008]<br>
 &emsp;นาย กฤษฎาภา ง่วนจร [61070006]<br>
 &emsp;นาย ณัฏฐกิตติ์ จายไธสง [61070048]<br>
-# Download And Play<br>
+## Download And Play<br>
 &emsp;[DOWNLOAD:(https://github.com/61070078/COMPRO)]<br>
 &emsp;Download Zip<br>
 &emsp;Go to --> SRC --> Main --> Lost_Fantasy.exe<br>
 &emsp;And Play !!!!<br>
-# Developer<br>
+## Developer<br>
+|<img src="Team/Tae.jpg" width="120px" height="120px">|<img src="Team/Poon.jpg" width="120px" height="120px">|<img src="Team/Ice.jpg" width="120px" height="120px">|<img src="Team/Tag.jpg" width="120px" height="120px">|
+|:---:|:---:|:---:|:---:|
+|**Tae**|**Poon**|**Ice**|**Tag**|
