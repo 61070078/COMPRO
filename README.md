@@ -15,7 +15,9 @@
 &emsp;Go to --> SRC --> Main --> Lost_Fantasy.exe<br>
 &emsp;And Play !!!!
 ## Tutorial<br>
-&emsp;Test
+&emsp;<img src="src/IMG/Tutorial/manu.png" width="780px" height="420px"><br>
+&emsp;กด Enter เพื่อเล่นเกม<br>
+&emsp;กด ESC เพื่อออกจากเกม<br>
 ## Developer<br>
 |<img src="Team/Tae.jpg" width="120px" height="120px">|<img src="Team/Poon.jpg" width="120px" height="120px">|<img src="Team/Ice.jpg" width="120px" height="120px">|<img src="Team/Tag.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|:---:|
