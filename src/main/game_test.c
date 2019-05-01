@@ -11,7 +11,7 @@ int main()
     int playerTextureValue = 4;
     int mapTextureValue = 5;
     int enemyTextureValue = 20;
-    int soundFxValue = 1;
+    int soundFxValue = 6;
     int musicValue = 4;
     int titleTextureValue = 17;
     int itemTextureValue = 10;
@@ -142,6 +142,11 @@ int main()
 
     Sound soundFx[soundFxValue];
     soundFx[0] = LoadSound("../Audio/Attack/Attack.ogg");
+    soundFx[1] = LoadSound("../Audio/Attack/Enemy/EM_1/Battle3.ogg");
+    soundFx[2] = LoadSound("../Audio/Attack/Enemy/EM_2/Attack3.ogg");
+    soundFx[3] = LoadSound("../Audio/Attack/Enemy/EM_3/Darkness3.ogg");
+    soundFx[4] = LoadSound("../Audio/Attack/Enemy/EM_4/Darkness4.ogg");
+    soundFx[5] = LoadSound("../Audio/Attack/Enemy/EM_5/Bow2.ogg");
 
     Texture2D itemTexture[itemTextureValue];
     itemTexture[0] = LoadTexture("../IMG/items/atkUp_T.png");
@@ -211,33 +216,33 @@ int main()
 
     item[0].useStatus = 0; //Potion
     item[0].timeCounter = 0;
-    item[0].itemValue = 100;
+    item[0].itemValue = 3;
     item[0].timeValue = 0;
 
     item[1].useStatus = 0; //Stamina
     item[1].timeCounter = 0;
-    item[1].itemValue = 100;
+    item[1].itemValue = 3;
     item[1].timeValue = 0;
 
     item[2].useStatus = 0; //Immortality Time
     item[2].timeCounter = 0;
-    item[2].itemValue = 100;
+    item[2].itemValue = 0;
     item[2].timeValue = 5;
 
     item[3].useStatus = 0; //Movement Speed Up
     item[3].timeCounter = 0;
-    item[3].itemValue = 100;
+    item[3].itemValue = 0;
     item[3].timeValue = 3;
 
     item[4].useStatus = 0; //Extra Health
     item[4].timeCounter = 0;
-    item[4].itemValue = 100;
+    item[4].itemValue = 0;
     item[4].timeValue = 0;
     item[4].effectValue = 0;
 
     item[5].useStatus = 0; //Grant Revive
     item[5].timeCounter = 0;
-    item[5].itemValue = 100;
+    item[5].itemValue = 0;
     item[5].timeValue = 0;
 
     struct Character player = {100, 100, 10, 6, 50, 50, 1, 0, 0, 0, false, 0};
@@ -325,7 +330,7 @@ int main()
 
     Rectangle enemyAttackBox[20];
     Rectangle enemyAttackFrame[20];
-    
+
     Rectangle mapBox[24];
     mapBox[0].x = 69; //--------- 1
     mapBox[0].y = 357;
@@ -525,7 +530,7 @@ int main()
                             }
                             break;
                     }
-                }      
+                }
 
                 enemyFrame[currentEnemy].x = 0;
                 enemyFrame[currentEnemy].y = 0;
@@ -747,8 +752,8 @@ int main()
                                     if(enemyBox[i].x < playerBox.x) enemyBox[i].x += enemy[i].speed/2;
                                     else if (enemyBox[i].x > playerBox.x) enemyBox[i].x -= enemy[i].speed/2;
                                 }
-                            }          
-                        } 
+                            }
+                        }
                 }
 
                 switch(enemy[i].type){
@@ -784,19 +789,19 @@ int main()
                 if ((enemy[i].type != 2 && enemy[i].type != 3) || enemy[i].state == 1){
                      if(enemy[i].texture%4 == 0){
                         enemyAttackBox[i].x = enemyBox[i].x+50;
-                        enemyAttackBox[i].y = enemyBox[i].y;   
+                        enemyAttackBox[i].y = enemyBox[i].y;
                         } else if(enemy[i].texture%4 == 1) {
                         enemyAttackBox[i].x = enemyBox[i].x-50;
-                        enemyAttackBox[i].y = enemyBox[i].y;     
+                        enemyAttackBox[i].y = enemyBox[i].y;
                         } else if(enemy[i].texture%4 == 2) {
                         enemyAttackBox[i].x = enemyBox[i].x;
-                        enemyAttackBox[i].y = enemyBox[i].y+50;     
+                        enemyAttackBox[i].y = enemyBox[i].y+50;
                         } else if(enemy[i].texture%4 == 3) {
                         enemyAttackBox[i].x = enemyBox[i].x;
-                        enemyAttackBox[i].y = enemyBox[i].y-50;     
+                        enemyAttackBox[i].y = enemyBox[i].y-50;
                     }
                 }
-                
+
 
                 if (enemy[i].state == 1 && enemy[i].hitPlayer && enemy[i].atkDelay == 0){
                     switch(enemy[i].type){
@@ -805,6 +810,7 @@ int main()
                             enemy[i].action = 1;
                             player.hp -= enemy[i].hp*0.1;
                             playerHp.width = (player.hp * 165)/player.maxHp;
+                            PlaySound(soundFx[1]);
                             break;
                         case 2:
                         case 3:
@@ -813,6 +819,13 @@ int main()
                             enemy[i].action = 1;
                             enemy[i].target.x = playerBox.x;
                             enemy[i].target.y = playerBox.y;
+                            switch(enemy[i].type) {
+                                case 3:
+                                    PlaySound(soundFx[4]);
+                                    break;
+                                case 2:
+                                    PlaySound(soundFx[3]);
+                            }
                             break;
                         default:
                             enemy[i].state = 2;
@@ -827,6 +840,13 @@ int main()
                             }
                             playerHp.width = (player.hp * 165)/player.maxHp;
                             enemy[i].atkDelay = monster[enemy[i].type].atkDelay;
+                            switch(enemy[i].type) {
+                                case 4:
+                                    PlaySound(soundFx[5]);
+                                    break;
+                                case 1:
+                                    PlaySound(soundFx[2]);
+                            }
                     }
                 }
 
@@ -893,7 +913,7 @@ int main()
                         enemy[i].action = 0;
                         enemy[i].state = -1;
                     }
-                    
+
                     if (enemy[i].atkFrame > 4) enemy[i].atkFrame = 0;
 
                     enemyAttackFrame[i].x = (float)enemy[i].atkFrame*50;
@@ -1504,7 +1524,7 @@ int main()
                         DrawTexturePro(attackTexture[player.texture], playerAttackFrame, playerAttackBox, origin, 0.0, WHITE);
                 }
                 DrawText(FormatText("%i", game.level), 0, 0, 39, GREEN);
-                
+
                 DrawTexture(titleTexture[15], 0, 80, WHITE);
                 DrawRectangleRec(playerHp, GREEN);
                 DrawRectangleRec(armorHp, BLUE);
