@@ -7,8 +7,8 @@
     สะสมจากการใช้ชีวิต เพื่อให้ผู้เล่นได้รุ้สึกถึงความสนุกและผ่อนคลาย โครงงานนี้จึงถูกพัฒนาขึ้นโดยเป็น
     เกมแนว rough-like ขึ้นมาดังนี้
 ## TECHNOLOGY<br>
-&emsp;C Language<br>
-&emsp;Raylib
+&emsp;1. C Language<br>
+&emsp;2. Raylib
 ## Download And Play<br>
 &emsp;<img src="Download/img_1.png" width="780px" height="420px"><br>
 &emsp;1. [DOWNLOAD:(https://github.com/61070078/COMPRO)]<br>
