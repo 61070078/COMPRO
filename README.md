@@ -39,6 +39,6 @@
 ## Developer<br>
 |<img src="Team/Tae.jpg" width="120px" height="120px">|<img src="Team/Poon.jpg" width="120px" height="120px">|<img src="Team/Ice.jpg" width="120px" height="120px">|<img src="Team/Tag.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|:---:|
-|**Tae**|**Poon**|**Ice**|**Tag**|
+|**Name**|**Tae**|**Poon**|**Ice**|**Tag**|
 |**61070078**|**61070006**|**61070048**|**61070008**|
-|**<a href="https://github.com/61070078">@61070078</a>**|**@KISSADAPA**|**@laxezice**|**@KasitinYenutok**|
+|**<a href="https://github.com/61070078">@61070078</a>**|**<a href="https://github.com/KISSADAPA">@KISSADAPA</a>**|**<a href="https://github.com/laxezice?tab=following">@laxezice**|**<a href="https://github.com/KasitinYenutok">@KasitinYenutok</a>**|
