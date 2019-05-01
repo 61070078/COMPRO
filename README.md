@@ -10,9 +10,13 @@
 &emsp;C Language<br>
 &emsp;Raylib
 ## Download And Play<br>
+&emsp;<img src="Download/img_1.png" width="780px" height="420px"><br>
 &emsp;[DOWNLOAD:(https://github.com/61070078/COMPRO)]<br>
-&emsp;Download Zip<br>
-&emsp;Go to --> SRC --> Main --> Lost_Fantasy.exe<br>
+&emsp;<img src="Download/img_2.png" width="780px" height="420px"><br>
+&emsp;Download Zip File<br>
+&emsp;<img src="Download/img_3.png" width="780px" height="420px"><br>
+&emsp;Go to folder--> SRC --> Main --> Lost_Fantasy.exe<br>
+<img src="src/IMG/Title/manu_1.png" width="780px" height="420px"><br>
 &emsp;And Play !!!!
 ## Tutorial<br>
 &emsp;<img src="src/IMG/Tutorial/manu.png" width="780px" height="420px"><br>
