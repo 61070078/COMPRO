@@ -8,11 +8,6 @@
 ## TECHNOLOGY<br>
 &emsp;C Language<br>
 &emsp;Raylib
-## Submitted by<br>
-&emsp;นาย ธนวัตน์ จันทร์หอม [61070078]<br>
-&emsp;นาย กษิติน เย็นอุทก [61070008]<br>
-&emsp;นาย กฤษฎาภา ง่วนจร [61070006]<br>
-&emsp;นาย ณัฏฐกิตติ์ จายไธสง [61070048]
 ## Download And Play<br>
 &emsp;[DOWNLOAD:(https://github.com/61070078/COMPRO)]<br>
 &emsp;Download Zip<br>
