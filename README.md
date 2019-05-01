@@ -10,11 +10,11 @@
 &emsp;1. C Language<br>
 &emsp;2. Raylib
 ## Download And Play<br>
-&emsp;<img src="Download/img_1.png" width="780px" height="420px"><br>
+&emsp;<img src="Readme_IMG/Download/img_1.png" width="780px" height="420px"><br>
 &emsp;1. [DOWNLOAD:(https://github.com/61070078/COMPRO)]<br>
-&emsp;<img src="Download/img_2.png" width="780px" height="420px"><br>
+&emsp;<img src="Readme_IMG/Download/img_2.png" width="780px" height="420px"><br>
 &emsp;2. Download Zip File<br>
-&emsp;<img src="Download/img_3.png" width="780px" height="420px"><br>
+&emsp;<img src="Readme_IMG/Download/img_3.png" width="780px" height="420px"><br>
 &emsp;3. Go to folder--> SRC --> Main --> Lost_Fantasy.exe<br>
 <img src="src/IMG/Title/manu_1.png" width="780px" height="420px"><br>
 &emsp;4. And Play !!!!
@@ -37,7 +37,7 @@
 &emsp;4. กด R เพื่อเล่นอีกรอบ<br>
 &emsp;5. กด H เพื่อกลับไปหน้า<br>
 ## Developer<br>
-|**รูป**|<img src="Team/Tae.jpg" width="120px" height="120px">|<img src="Team/Poon.jpg" width="120px" height="120px">|<img src="Team/Ice.jpg" width="120px" height="120px">|<img src="Team/Tag.jpg" width="120px" height="120px">|
+|**รูป**|<img src="Readme_IMG/Team/Tae.jpg" width="120px" height="120px">|<img src="Readme_IMG/Team/Poon.jpg" width="120px" height="120px">|<img src="Readme_IMG/Team/Ice.jpg" width="120px" height="120px">|<img src="Readme_IMG/Team/Tag.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|:---:|:---:|
 |**Name**|**Tae**|**Poon**|**Ice**|**Tag**|
 |**Student ID**|**61070078**|**61070006**|**61070048**|**61070008**|
