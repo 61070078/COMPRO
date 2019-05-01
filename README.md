@@ -1,4 +1,4 @@
-# LOST FANTASY
+# <p style="text-align: center;">LOST FANTASY<p>
 &emsp;&emsp;&emsp;<img src="src/IMG/Title/manu_1.png" width="780px" height="420px"><br>
 ## ABSTRACT<br>
 &emsp;เนื่องในปัจจุบันสภาพจิตใจของผู้คนในสังคมส่อแววที่จะเป็นโรคซึมเศร้าจากการที่สั่งสมความเครียดในชีวิต 
