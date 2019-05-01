@@ -18,6 +18,10 @@
 &emsp;<img src="src/IMG/Tutorial/manu.png" width="780px" height="420px"><br>
 &emsp;กด Enter เพื่อเล่นเกม<br>
 &emsp;กด ESC เพื่อออกจากเกม<br>
+&emsp;<img src="src/IMG/Tutorial/inGame_1.png" width="780px" height="420px"><br>
+&emsp;1.เลือดของศัตรู<br>
+&emsp;2.ของที่มีอยู่ในตัวที่สามารถกดได้<br>
+&emsp;3.สถานะเลือดและพลังงานของเรา<br>
 ## Developer<br>
 |<img src="Team/Tae.jpg" width="120px" height="120px">|<img src="Team/Poon.jpg" width="120px" height="120px">|<img src="Team/Ice.jpg" width="120px" height="120px">|<img src="Team/Tag.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|:---:|
