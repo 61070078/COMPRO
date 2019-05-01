@@ -231,7 +231,7 @@ int main()
     monster[1].hp = 80;
     monster[1].attack = 0; //1
     monster[1].speed = 4;
-    monster[1].atkDelay = 18;
+    monster[1].atkDelay = 20;
     monster[1].texture = 0;
     monster[1].frame = 0;
     monster[1].state = 1;
@@ -243,7 +243,7 @@ int main()
     monster[2].hp = 30;
     monster[2].attack = 0; //3
     monster[2].speed = 5;
-    monster[2].atkDelay = 24;
+    monster[2].atkDelay = 35;
     monster[2].texture = 0;
     monster[2].frame = 0;
     monster[2].state = 1;
@@ -267,7 +267,7 @@ int main()
     monster[4].hp = 40;
     monster[4].attack = 0; //2
     monster[4].speed = 6;
-    monster[4].atkDelay = 20;
+    monster[4].atkDelay = 28;
     monster[4].texture = 0;
     monster[4].frame = 0;
     monster[4].state = 1;
@@ -617,6 +617,12 @@ int main()
                                     else if (enemyBox[i].x > playerBox.x) enemyBox[i].x -= enemy[i].speed/2;
                                 }
                             }          
+                        } else if (enemy[i].state == 1 && enemy.hitPlayer && enemy.atkDelay == 0){
+                            switch(enemy[i].type){
+                                case 1:
+                                    enemy.state = 2;
+                                    enemy.action = 1; 
+                            }
                         }
                
                 }
