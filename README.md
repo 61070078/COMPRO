@@ -35,7 +35,7 @@
 &emsp;2. จำนวนที่ฆ่าศัตรูไปได้<br>
 &emsp;3. จำนวนความเสียหายที่ทำได้<br>
 &emsp;4. กด R เพื่อเล่นอีกรอบ<br>
-&emsp;5. กด H เพื่อกลับไปหน้า<br>
+&emsp;5. กด H เพื่อกลับไปหน้า Home<br>
 ## Developer<br>
 |**รูป**|<img src="Readme_IMG/Team/Tae.jpg" width="120px" height="120px">|<img src="Readme_IMG/Team/Poon.jpg" width="120px" height="120px">|<img src="Readme_IMG/Team/Ice.jpg" width="120px" height="120px">|<img src="Readme_IMG/Team/Tag.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|:---:|:---:|
