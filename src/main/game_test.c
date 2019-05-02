@@ -179,6 +179,7 @@ int main()
 
     struct Enemy {
         int type;
+        int maxHp;
         int hp;
         int attack;
         float speed;
@@ -250,9 +251,10 @@ int main()
     struct Enemy monster[5];
 
     monster[0].type = 0;
+    monster[0].maxHp = 50;
     monster[0].hp = 50;
     monster[0].attack = 0;
-    monster[0].speed = 6;
+    monster[0].speed = 3;
     monster[0].atkDelay = 0;
     monster[0].texture = 0;
     monster[0].frame = 0;
@@ -263,9 +265,10 @@ int main()
     monster[0].atkFrame = 0;
 
     monster[1].type = 1;
+    monster[1].maxHp = 80;
     monster[1].hp = 80;
     monster[1].attack = 1; //1
-    monster[1].speed = 4;
+    monster[1].speed = 3;
     monster[1].atkDelay = 50;
     monster[1].texture = 0;
     monster[1].frame = 0;
@@ -276,9 +279,10 @@ int main()
     monster[1].atkFrame = 0;
 
     monster[2].type = 2;
+    monster[2].maxHp = 30;
     monster[2].hp = 30;
     monster[2].attack = 2; //2
-    monster[2].speed = 5;
+    monster[2].speed = 4;
     monster[2].atkDelay = 75;
     monster[2].texture = 0;
     monster[2].frame = 0;
@@ -289,6 +293,7 @@ int main()
     monster[2].atkFrame = 0;
 
     monster[3].type = 3;
+    monster[3].maxHp = 30;
     monster[3].hp = 30;
     monster[3].attack = 3; //3
     monster[3].speed = 3;
@@ -302,9 +307,10 @@ int main()
     monster[3].atkFrame = 0;
 
     monster[4].type = 4;
+    monster[4].maxHp = 40;
     monster[4].hp = 40;
     monster[4].attack = 2; //2
-    monster[4].speed = 5.5;
+    monster[4].speed = 3;
     monster[4].atkDelay = 60;
     monster[4].texture = 0;
     monster[4].frame = 0;
@@ -328,6 +334,7 @@ int main()
     Rectangle playerHp =  {45, 686, 165.0, 20};
     Rectangle armorHp =  {45, 686, 0, 20};
 
+    Rectangle enemyHp[20];
     Rectangle enemyAttackBox[20];
     Rectangle enemyAttackFrame[20];
 
@@ -335,7 +342,7 @@ int main()
     mapBox[0].x = 69; //--------- 1
     mapBox[0].y = 357;
     mapBox[0].width = 153;
-    mapBox[0].height = 154;
+    mapBox[0].height = 296;
 
     mapBox[1].x = 222;
     mapBox[1].y = 511;
@@ -350,7 +357,7 @@ int main()
     mapBox[3].x = 1058;
     mapBox[3].y = 212;
     mapBox[3].width = 150;
-    mapBox[3].height = 158; //---------
+    mapBox[3].height = 310; //---------
 
     mapBox[4].x = 203; //--------- 2
     mapBox[4].y = 200;
@@ -480,8 +487,9 @@ int main()
 
             if(currentEnemy < enemyValue && framesCounter%7 == 0){
                 enemy[currentEnemy].type = randoms(0, 4);
-                enemy[currentEnemy].hp = monster[enemy[currentEnemy].type].hp + 5 * game.level + 5*(game.level%5 == 0)*game.level;
-                enemy[currentEnemy].attack = monster[enemy[currentEnemy].type].attack + 1 * game.level/5;
+                enemy[currentEnemy].maxHp = monster[enemy[currentEnemy].type].hp + 5 * game.level + 5*(game.level%5 == 0)*game.level;
+                enemy[currentEnemy].hp = enemy[currentEnemy].maxHp;
+                enemy[currentEnemy].attack = monster[enemy[currentEnemy].type].attack + 2 * game.level/2;
                 enemy[currentEnemy].speed = monster[enemy[currentEnemy].type].speed;
                 enemy[currentEnemy].atkDelay = 0;
                 enemy[currentEnemy].texture = monster[enemy[currentEnemy].type].texture;
@@ -552,6 +560,11 @@ int main()
                 enemyAttackFrame[currentEnemy].y = 0;
                 enemyAttackFrame[currentEnemy].width = 50;
                 enemyAttackFrame[currentEnemy].height = 50;
+
+                enemyHp[currentEnemy].x = enemyBox[currentEnemy].x;
+                enemyHp[currentEnemy].y = enemyBox[currentEnemy].y - 15;
+                enemyHp[currentEnemy].width = 50;
+                enemyHp[currentEnemy].height = 10;
 
                 currentEnemy ++;
             }
@@ -755,6 +768,8 @@ int main()
                             }
                         }
                 }
+                enemyHp[i].x = enemyBox[i].x;
+                enemyHp[i].y = enemyBox[i].y - 15;
 
                 switch(enemy[i].type){
                     case 1:
@@ -808,7 +823,7 @@ int main()
                         case 0:
                             enemy[i].state = -1;
                             enemy[i].action = 1;
-                            player.hp -= enemy[i].hp*0.1;
+                            player.hp -= (enemy[i].hp*0.1 - player.defend)*((enemy[i].attack - player.defend) > 0);
                             playerHp.width = (player.hp * 165)/player.maxHp;
                             PlaySound(soundFx[1]);
                             break;
@@ -856,7 +871,7 @@ int main()
                         if(enemy[i].action > 0){
                             enemyAttackBox[i].x = enemy[i].target.x;
                             enemyAttackBox[i].y = enemy[i].target.y;
-                            if (enemy[i].action > 6){
+                            if (enemy[i].action > 12){
                                 if (enemy[i].attack > player.defend && CheckCollisionRecs(playerBox, enemyAttackBox[i])) {
                                     enemy[i].state = 1;
                                     enemy[i].action = 0;
@@ -888,7 +903,7 @@ int main()
                                     item[4].effectValue -= enemy[i].attack;
                                     armorHp.width = (item[4].effectValue/50)*80;
                                 } else {
-                                    player.hp -= enemy[i].attack - player.defend;
+                                    player.hp -= (enemy[i].attack - player.defend)*((enemy[i].attack - player.defend) > 0);
                                 }
                             } else if (enemyAttackBox[i].x == enemy[i].target.x && enemyAttackBox[i].y == enemy[i].target.y){
                                 enemy[i].state = 1;
@@ -904,8 +919,8 @@ int main()
 
                 if(enemy[i].action > 0){
                     enemy[i].action ++;
-                    if(enemy[i].action % 2 == 0) enemy[i].atkFrame ++;
-                    else if (enemy[i].action > 11 && enemy[i].type != 3 && enemy[i].type != 0){
+                    if(enemy[i].action % 4 == 0) enemy[i].atkFrame ++;
+                    else if (enemy[i].action > 21 && enemy[i].type != 3 && enemy[i].type != 0){
                         enemy[i].action = 0;
                         enemy[i].state = 1;
                         enemy[i].atkFrame = 0;
@@ -1151,6 +1166,7 @@ int main()
                         if(CheckCollisionRecs(playerAttackBox, enemyBox[i])){
                             enemy[i].hp -= player.attack;
                             game.damageDone += player.attack;
+                            enemyHp[i].width = (enemy[i].hp * 50)/enemy[i].maxHp;
                             if(enemy[i].hp <= 0){
                                 enemy[i].hp = 0;
                                 enemy[i].state = -1;
@@ -1257,7 +1273,7 @@ int main()
                         switch (i)
                         {
                             case 2:
-                                player.defend = player.defend + 1000;
+                                player.defend = player.defend + 9999;
                                 break;
                             case 3:
                                 player.speed = player.speed + 10;
@@ -1268,7 +1284,7 @@ int main()
                             switch (i)
                             {
                                 case 2:
-                                    player.defend = player.defend - 5000;
+                                    player.defend = player.defend - 9999*5;
                                     break;
                                 case 3:
                                     player.speed = player.speed - 30;
@@ -1382,7 +1398,7 @@ int main()
                         player.attack += 10;
                         break;
                     case 1:
-                        player.defend += 10;
+                        player.defend += 5;
                         break;
                     case 4:
                         player.maxHp += 20;
@@ -1424,7 +1440,7 @@ int main()
                         player.attack += 10;
                         break;
                     case 1:
-                        player.defend += 10;
+                        player.defend += 5;
                         break;
                     case 4:
                         player.maxHp += 20;
@@ -1507,7 +1523,7 @@ int main()
                         break;
                     default:
                         DrawTexturePro(enemyTexture[enemy[i].texture], enemyFrame[i], enemyBox[i], origin, 0.0, WHITE);
-                        DrawText(FormatText("%d", enemy[i].hp), enemyBox[i].x, enemyBox[i].y - 22, 20, GRAY);
+                        DrawRectangleRec(enemyHp[i], RED);
                     }
                     switch(enemy[i].action){
                     case 0:
