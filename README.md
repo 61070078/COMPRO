@@ -45,4 +45,9 @@
 ## Special Thanks<br>
 |**รูป**|<img src="https://github.com/azurelisz/KitCash/blob/master/Pics/ksc.jpg" width="120px" height="120px">|<img src="https://github.com/azurelisz/KitCash/blob/master/Pics/pw.jpg" width="120px" height="120px">|
 |:---:|:---:|:---:|
-|**Name**|**Asst Profressor Kitsuchart Pasupa**|**Asst Profressor Panwit Tuwanut**|
+|**Name**|**Asst Profressor Kitsuchart Pasupa**|**Asst Profressor Panwit Tuwanut**|<br>
+รายงาน และ ซอร์สโค้ดนี้ เป็นส่วนหนึ่งของวิชา การสร้างโปรแกรมคอมพิวเตอร์ Computer Programming (06016206)<br>
+หลักสูตรวิทยาศาสตร์บัณฑิต สาขาวิชาเทคโนโลยีสารสนเทศ<br>
+ภาคเรียนที่ 2 ปีการศึกษา 2561<br>
+คณะเทคโนโลยีสารสนเทศ<br>
+สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง<br>
