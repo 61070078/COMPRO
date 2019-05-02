@@ -11,9 +11,9 @@
 &emsp;2. Raylib
 ## Download And Play<br>
 &emsp;<img src="Readme_IMG/Download/img_1.png" width="780px" height="420px"><br>
-&emsp;1. [DOWNLOAD:(https://github.com/61070078/COMPRO)]<br>
+&emsp;1. [DOWNLOAD:(https://github.com/61070078/COMPRO)] Download Zip File<br>
 &emsp;<img src="Readme_IMG/Download/img_2.png" width="780px" height="420px"><br>
-&emsp;2. Download Zip File<br>
+&emsp;2. Extract files Zip<br>
 &emsp;<img src="Readme_IMG/Download/img_3.png" width="780px" height="420px"><br>
 &emsp;3. Go to folder--> SRC --> Main --> Lost_Fantasy.exe<br>
 <img src="src/IMG/Title/manu_1.png" width="780px" height="420px"><br>
